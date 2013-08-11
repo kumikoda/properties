@@ -33,5 +33,5 @@ module.exports = (app) ->
   app.use express.session 
     secret: 'keyboard cat'
   app.use flash()
-  app.use app.router
+  
 

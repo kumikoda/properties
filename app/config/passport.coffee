@@ -1,9 +1,8 @@
-passport = require 'passport'
 LocalStrategy = require('passport-local').Strategy
 mongoose = require 'mongoose' 
 User = mongoose.model 'User'
 
-module.exports = (app) ->
+module.exports = (app, passport) ->
   passport.serializeUser (user, done) ->
     createAccessToken = ->
       token = user.generateRandomToken()
@@ -49,21 +48,16 @@ module.exports = (app) ->
         else 
           return done null, false, { message: 'Invalid password' } 
         
-      
-  ensureAuthenticated = (req, res, next) ->
-      if (req.isAuthenticated()) 
-         return next(); 
-      res.redirect('/')  
-  
-
   rememberMe = (req, res, next) ->
-    if  req.method == 'POST' and req.url == '/login'
-        req.session.cookie.maxAge = 2592000000 # 30*24*60*60*1000 Rememeber 'me' for 30 days
+    if req.method == 'POST' and req.url == '/login'
+      req.session.cookie.maxAge = 2592000000 # 30*24*60*60*1000 Rememeber 'me' for 30 days
     
     next()
-  
+    
+
+    
   app.use passport.initialize()
   app.use passport.session()
   app.use rememberMe
-  app.set 'ensureAuthenticated', ensureAuthenticated
+  app.use app.router
     

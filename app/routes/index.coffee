@@ -1,5 +1,12 @@
-# In this file we declare all the routes
-home = require './home'
+middleware = require './middleware'
 
-module.exports = (app) ->
-  app.get '/', home.index  
+module.exports = (app,passport) ->
+
+  require('./site')(app, middleware)
+  require('./user')(app, middleware)
+  require('./authentication')(app, passport)
+
+
+  
+
+  
