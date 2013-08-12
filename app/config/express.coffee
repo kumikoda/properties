@@ -13,25 +13,28 @@ module.exports = (app) ->
   
   # coffeescript
   app.use coffeescript  
-    src: __dirname + '/../assets/src/coffee'
-    dest: __dirname + '/../assets/public/js'
+    src: __dirname + '/../assets/src/'
+    dest: __dirname + '/../assets/public/'
     bare: true  
   
   
   # stylus with nib
   app.use stylus.middleware
-    src: __dirname + '/../assets/src/stylus'
-    dest: __dirname + '/../assets/public/css'
+    src: __dirname + '/../assets/src/'
+    dest: __dirname + '/../assets/public/'
     compile: (str, path) ->
       return stylus(str)
         .set('filename', path)
         .use(nib());
   
 
-  # public directories
-  app.use '/js', express.static __dirname + '/../assets/public/js'
-  app.use '/css', express.static __dirname + '/../assets/public/css'
-  app.use express.static __dirname + '/../assets/public/'
+  # public directory
+  app.use express.static __dirname + '/../assets/public'
+
+
+  #file name is coffee / main.js
+  # goes to dest does not find it
+  # compiles 
 
 
   app.use express.bodyParser()
