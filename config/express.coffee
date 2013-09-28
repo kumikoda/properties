@@ -29,6 +29,8 @@ module.exports = (app) ->
 
   # public directory
   app.use express.static __dirname + '/../app/public'
+  app.use '/vendor', express.static __dirname + '/../app/vendor'
+
 
   app.use express.bodyParser()
   app.use express.cookieParser()
