@@ -10,11 +10,6 @@
     "jade": "*",
     "stylus": "*",
     "nib":"*",
-    "mongoose":"*",
-    "passport":"*",
-    "passport-local" : "*",
-    "connect-flash" : "0.1.x",
-    "connect-coffee-script" : "*",
-    "bcrypt": "0.7.x"
+    "connect-coffee-script" : "*"  
   }
 }
