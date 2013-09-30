@@ -8,15 +8,17 @@ block styles
 block scripts
   script(src='/vendor/jquery.min.js')
   script(src='/vendor/angular.min.js')
-  script(src="/vendor/bootstrap.min.js")
-
-  script(src='https://maps.googleapis.com/maps/api/js?key=AIzaSyDh51Oc4-bpuZ0kTHP5qNXit_yn7_wCOGc&sensor=true')
-  script(src='/scripts/main.js')
-
+  script(src='/vendor/bootstrap.min.js')
+  script(src='/vendor/crossfilter.min.js')
+  script(src='https://maps.googleapis.com/maps/api/js?key=AIzaSyDh51Oc4-bpuZ0kTHP5qNXit_yn7_wCOGc&sensor=true&libraries=geometry')
+  script(src='/scripts/maps.js')
+  script(src='/scripts/app.js')
+  
 block content
-  .container 
+  .container(ng-app)
     h1 Hello world! 
-    #map-canvas
+    #map-canvas(ng-controller='appController')
 
+  
 
 

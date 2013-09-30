@@ -1,6 +1,6 @@
-var createCoords, createPolygon, initialize, properties;
+var createCoords, createPolygon, initialize, properties, propertiesByTimeRange, propertiesByWeight;
 
-properties = [
+properties = crossfilter([
   {
     "type": "maxDispatchDistanceMiles",
     "value": 3,
@@ -9,12 +9,12 @@ properties = [
     "geofences": [[37.7749295, -122.4194155], [37.7900295, -122.4194155], [37.7900295, -122.4704155], [37.7749295, -122.4704155], [37.7749295, -122.4194155]]
   }, {
     "type": "maxDispatchDistanceMiles",
-    "value": 3,
-    "weight": 1,
-    "timeRange": [10, 16],
-    "geofences": [[37.7749295, -122.4194155], [37.7900295, -122.4194155], [37.7900295, -122.4704155], [37.7749295, -122.4704155], [37.7749295, -122.4194155]]
+    "value": 5,
+    "weight": 2,
+    "timeRange": [14, 8],
+    "geofences": [[37.7859295, -122.4304155], [37.7609295, -122.4504155], [37.7459295, -122.4304155], [37.7709295, -122.4154155], [37.7859295, -122.4304155]]
   }
-];
+]);
 
 createCoords = function(points) {
   var point, _i, _len, _results;
@@ -26,9 +26,9 @@ createCoords = function(points) {
   return _results;
 };
 
-createPolygon = function(coords) {
+createPolygon = function(property) {
   return new google.maps.Polygon({
-    paths: coords,
+    paths: createCoords(property.geofences),
     strokeColor: "#FF0000",
     strokeOpacity: 0.8,
     strokeWeight: 2,
@@ -37,23 +37,18 @@ createPolygon = function(coords) {
   });
 };
 
+propertiesByWeight = properties.dimension(function(d) {
+  return d.weight;
+});
+
+propertiesByTimeRange = properties.dimension(function(d) {
+  return d.timeRnage;
+});
+
 initialize = function() {
-  var $map, coord, map, myLatLng, polygon, property, _i, _len, _results;
-  $map = $('#map-canvas')[0];
-  myLatLng = new google.maps.LatLng(37.7749295, -122.4194155);
-  map = new google.maps.Map($map, {
-    zoom: 5,
-    center: myLatLng,
-    mapTypeId: google.maps.MapTypeId.TERRAIN
-  });
-  _results = [];
-  for (_i = 0, _len = properties.length; _i < _len; _i++) {
-    property = properties[_i];
-    coord = createCoords(property.geofences);
-    polygon = createPolygon(coord);
-    _results.push(polygon.setMap(map));
-  }
-  return _results;
+  var center, zoom;
+  center = new google.maps.LatLng(37.7749295, -122.4194155);
+  return zoom = 13;
 };
 
 google.maps.event.addDomListener(window, "load", initialize);
