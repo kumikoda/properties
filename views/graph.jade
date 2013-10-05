@@ -13,17 +13,12 @@ block scripts
   script(src='/vendor/d3.min.js')
   script(src='/vendor/nv.d3.min.js')
 
-  script(src='https://maps.googleapis.com/maps/api/js?key=AIzaSyDh51Oc4-bpuZ0kTHP5qNXit_yn7_wCOGc&sensor=true&libraries=geometry')
+  script(src='/scripts/graph.js')
   
-  script(src='/scripts/maps.js')
-  script(src='/scripts/app.js')
-  
-  script(src='/scripts/chart.js')
 block content
   .container(ng-app)
-    #map-canvas(ng-controller='appController')
 
-    #chart
+    #chart1
       svg
 
   

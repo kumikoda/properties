@@ -31,8 +31,16 @@ appController = ($scope) ->
   initialize = ->
     console.log 'init'
     initMap()
+    initChart()
+
     initProperties()
-    initGraph()
+
+    redrawMap()
+    
+  initProperties = ->
+    $scope.properties = for d in getData()
+      new Property d, $scope.map    
+
 
   initMap = ->
     $scope.map = new google.maps.Map $('#map-canvas')[0],
@@ -40,43 +48,40 @@ appController = ($scope) ->
       center : new google.maps.LatLng 37.7749295, -122.4194155
       mapTypeId : google.maps.MapTypeId.TERRAIN
 
-    # listen to drag event to update graph  
-    google.maps.event.addListener $scope.map, 'dragend', redrawGraph
+    # listen to drag event to update Chart  
+    google.maps.event.addListener $scope.map, 'dragend', redrawChart
     
-  initGraph = ->
-    # all the properties that interset the center
+  initChart = ->
+    $scope.chart = new Chart
+    $scope.chart.render(data1)
 
-    properties = for p in $scope.properties
-      if p.containsPoint $scope.map.getCenter()
-        p
-
-    for time in [0..23]
+  
+  redrawChart = =>
+    properties = $scope.properties.filter (p) ->
+      p.containsPoint $scope.map.getCenter()
+        
+    values = for time in [0..23]
+      
+      # find the max value at this time
       current = undefined
-      for p in $scope.properties
-        if p.containsTime time
-          if not current or p.weight > current.weight 
-            current = p
-      console.log p
-          
+      for p in properties when p.containsTime time
+        if not current or p.weight > current.weight 
+          current = p
+      
+      label: time
+      value: current?.options.value ? null
+
+    data = [
+      values: values
+    ]
+
+    $scope.chart.render(data2)
 
     
+    
 
-    # listen to drag event to update map
-
-  initProperties = ->
-    $scope.properties = for d in getData()
-      property = new Property d, $scope.map
-      property.render()
-      property    
-
-  redrawGraph = =>
-    # filter through all properties that intersect this geolocation
-    for p in $scope.properties
-      if p.containsPoint $scope.map.getCenter()
-        console.log 'yes!' 
-
-  window.redrawMap = =>
-    time = 17
+  window.redrawMap = () =>
+    time = 12 # get current time
     for p in $scope.properties
       if p.containsTime time
         p.render()
