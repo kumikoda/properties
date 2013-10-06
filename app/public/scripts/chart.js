@@ -15,7 +15,7 @@ Chart = (function(_super) {
     this.chart.yAxis.tickFormat(function(d, i) {
       return d;
     });
-    this.chart.xAxis.tickFormat(function(d, i) {
+    this.chart.xAxis.axisLabel('Time').tickFormat(function(d, i) {
       return d;
     });
   }

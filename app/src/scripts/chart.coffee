@@ -11,7 +11,7 @@ class Chart extends EventEmitter
 
     @chart.yAxis.tickFormat (d, i) -> d
 
-    @chart.xAxis.tickFormat (d, i) -> d
+    @chart.xAxis.axisLabel('Time').tickFormat (d, i) -> d
 
     
   render : (data)->

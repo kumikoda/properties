@@ -1,3 +1,15 @@
+colors = [
+  'F7F4F9'
+, 'E7E1EF'
+, 'D4B9DA'
+, 'C994C7'
+, 'DF65B0'
+, 'E7298A'
+, 'CE1256'
+, '980043'
+, '67001F'
+]
+
 class Property 
   constructor : (@options, @map) ->
     @polygon = createPolygon @options
@@ -26,12 +38,13 @@ class Property
 createPolygon = (property) ->
 
   paths = (new google.maps.LatLng point[0] , point[1] for point in property.geofences)
-  
+  console.log colors[property.value]
+
   new google.maps.Polygon
     paths : paths
-    strokeColor: "#FF0000"
+    strokeColor: colors[property.value]
     strokeOpacity: 0.8
     strokeWeight: 2
-    fillColor: "#FF0000"
-    fillOpacity: 0.35
+    fillColor: colors[property.value]
+    fillOpacity: 0.5
 

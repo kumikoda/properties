@@ -1,4 +1,6 @@
-var Property, createPolygon;
+var Property, colors, createPolygon;
+
+colors = ['F7F4F9', 'E7E1EF', 'D4B9DA', 'C994C7', 'DF65B0', 'E7298A', 'CE1256', '980043', '67001F'];
 
 Property = (function() {
   function Property(options, map) {
@@ -46,12 +48,13 @@ createPolygon = function(property) {
     }
     return _results;
   })();
+  console.log(colors[property.value]);
   return new google.maps.Polygon({
     paths: paths,
-    strokeColor: "#FF0000",
+    strokeColor: colors[property.value],
     strokeOpacity: 0.8,
     strokeWeight: 2,
-    fillColor: "#FF0000",
-    fillOpacity: 0.35
+    fillColor: colors[property.value],
+    fillOpacity: 0.5
   });
 };

@@ -30,16 +30,65 @@ appController = ($scope) ->
       ]
     ,
       "type": "maxDispatchDistanceMiles"
+      "value": 8
+      "weight": 3
+      "timeRange": [0, 8]
+      "geofences": [
+        [37.794329926137074, -122.39469626171876] 
+        [37.784969517158466, -122.38782980664064] 
+        [37.77330126061319, -122.40156271679689]  
+        [37.78022103035753, -122.41254904492189]
+        [37.794329926137074, -122.39469626171876] 
+      ]
+    ,
+      "type": "maxDispatchDistanceMiles"
       "value": 7
       "weight": 3
       "timeRange": [0, 8]
       "geofences": [
-        [37.789989014339184, -122.39744284375001]
-        [37.785783512835465, -122.38697149975587]
-        [37.77316557237902, -122.40121939404298] 
-        [37.78469818327388, -122.41272070629884]
-        [37.78985335673589, -122.39744284375001]
+        [37.80463856948931, -122.44688132031251] 
+        [37.808707374774876, -122.4103174470215] 
+        [37.79731415505711, -122.40619757397462]  
+        [37.79256646147798, -122.44499304516603] 
+        [37.80463856948931, -122.44688132031251] 
       ]
+    ,
+      "type": "maxDispatchDistanceMiles"
+      "value": 4
+      "weight": 3
+      "timeRange": [10, 20]
+      "geofences": [
+        [37.79243080860667, -122.40430929882814]  
+        [37.78822544607388, -122.40379431469728] 
+        [37.778999941586854, -122.42508032543947]   
+        [37.78849676700842, -122.42851355297853] 
+        [37.79243080860667, -122.40430929882814]  
+      ]
+    ,
+      "type": "maxDispatchDistanceMiles"
+      "value": 6
+      "weight": 3
+      "timeRange": [0, 8]
+      "geofences": [
+        [37.768823417405684, -122.426796939209] 
+        [37.77018036822573, -122.41220572216798] 
+        [37.752809517327655, -122.41048910839845]  
+        [37.751587975877136, -122.42490866406251] 
+        [37.768823417405684, -122.426796939209]  
+      ]
+    ,
+      "type": "maxDispatchDistanceMiles"
+      "value": 3
+      "weight": 3
+      "timeRange": [8, 22]
+      "geofences": [
+        [37.768823417405684, -122.426796939209] 
+        [37.77018036822573, -122.41220572216798] 
+        [37.752809517327655, -122.41048910839845]  
+        [37.751587975877136, -122.42490866406251] 
+        [37.768823417405684, -122.426796939209]  
+      ]
+
     ]
 
   initialize = ->
@@ -59,6 +108,8 @@ appController = ($scope) ->
       position: $scope.map.getCenter()
       map: $scope.map
 
+    nv.utils.windowResize redrawPointer
+
   initProperties = ->
     $scope.properties = for d in getData()
       new Property d, $scope.map    
@@ -72,12 +123,17 @@ appController = ($scope) ->
 
     # listen to drag event to update Chart  
     google.maps.event.addListener $scope.map, 'dragend', ->
+      console.log [$scope.map.getCenter().lb,$scope.map.getCenter().mb] 
+
       redrawChart()
       redrawMap()
     
     # listen to drag event to update marker
-    google.maps.event.addListener $scope.map, 'drag', ->
-      $scope.marker.setPosition $scope.map.getCenter()
+    google.maps.event.addListener $scope.map, 'drag', redrawPointer
+
+
+  redrawPointer = ->
+    $scope.marker.setPosition $scope.map.getCenter()
 
   initChart = ->
     $scope.chart = new Chart
