@@ -1,63 +1,44 @@
-var Chart, data1, data2, i;
+var Chart,
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
-data1 = [
-  {
-    values: (function() {
-      var _i, _results;
-      _results = [];
-      for (i = _i = 0; _i <= 23; i = ++_i) {
-        _results.push({
-          label: i,
-          value: i
-        });
-      }
-      return _results;
-    })()
-  }
-];
+Chart = (function(_super) {
+  __extends(Chart, _super);
 
-data2 = [
-  {
-    values: (function() {
-      var _i, _results;
-      _results = [];
-      for (i = _i = 0; _i <= 23; i = ++_i) {
-        _results.push({
-          label: i,
-          value: i * 2
-        });
-      }
-      return _results;
-    })()
-  }
-];
-
-Chart = (function() {
   function Chart() {
     this.d3 = d3.select("#chart svg");
     this.chart = nv.models.discreteBarChart().x(function(d) {
       return d.label;
     }).y(function(d) {
       return d.value;
-    }).tooltips(true).showValues(false).color(['red']).forceY([0, 100]);
+    }).showValues(false).color(['grey']).tooltips(false);
     this.chart.yAxis.tickFormat(function(d, i) {
       return d;
     });
     this.chart.xAxis.tickFormat(function(d, i) {
-      if (!(d % 2)) {
-        return d;
-      }
+      return d;
     });
-    nv.utils.windowResize(this.chart.update);
   }
 
   Chart.prototype.render = function(data) {
+    var _this = this;
     this.d3.datum(data).transition().duration(500).call(this.chart);
-    return nv.addGraph(function() {
+    nv.addGraph(function() {
       return this.chart;
     });
+    nv.utils.windowResize(this.chart.update);
+    return $('svg g').on('click', function(e) {
+      $('.selected').attr('class', 'nv-bar positive');
+      $(e.currentTarget).attr('class', 'nv-bar positive selected');
+      return _this.emit('select', $(e.currentTarget).attr('label'));
+    });
+  };
+
+  Chart.prototype.select = function(time) {
+    $('svg g.nv-bar').attr('class', 'nv-bar positive');
+    return $('svg g[label=time]').attr('nv-bar positive selected');
   };
 
   return Chart;
 
-})();
+})(EventEmitter);

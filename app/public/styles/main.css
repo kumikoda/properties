@@ -1,12 +1,17 @@
 .container {
-  max-width: 940px;
+  max-width: 100%;
 }
 #map-canvas {
   height: 500px;
+  width: 100%;
 }
 svg {
   display: block;
 }
 #chart svg {
   height: 300px;
+}
+.selected {
+  stroke: #f00 !important;
+  fill: #f00 !important;
 }

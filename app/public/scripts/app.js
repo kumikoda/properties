@@ -1,7 +1,7 @@
 var appController;
 
 appController = function($scope) {
-  var getData, initChart, initMap, initProperties, initialize, redrawChart,
+  var getData, initChart, initMap, initPointer, initProperties, initialize, redrawChart, redrawMap,
     _this = this;
   console.log('start');
   getData = function() {
@@ -18,6 +18,12 @@ appController = function($scope) {
         "weight": 2,
         "timeRange": [14, 8],
         "geofences": [[37.7859295, -122.4304155], [37.7609295, -122.4504155], [37.7459295, -122.4304155], [37.7709295, -122.4154155], [37.7859295, -122.4304155]]
+      }, {
+        "type": "maxDispatchDistanceMiles",
+        "value": 7,
+        "weight": 3,
+        "timeRange": [0, 8],
+        "geofences": [[37.789989014339184, -122.39744284375001], [37.785783512835465, -122.38697149975587], [37.77316557237902, -122.40121939404298], [37.78469818327388, -122.41272070629884], [37.78985335673589, -122.39744284375001]]
       }
     ];
   };
@@ -25,8 +31,16 @@ appController = function($scope) {
     console.log('init');
     initMap();
     initChart();
+    initPointer();
     initProperties();
+    redrawChart();
     return redrawMap();
+  };
+  initPointer = function() {
+    return $scope.marker = new google.maps.Marker({
+      position: $scope.map.getCenter(),
+      map: $scope.map
+    });
   };
   initProperties = function() {
     var d;
@@ -47,14 +61,20 @@ appController = function($scope) {
       center: new google.maps.LatLng(37.7749295, -122.4194155),
       mapTypeId: google.maps.MapTypeId.TERRAIN
     });
-    return google.maps.event.addListener($scope.map, 'dragend', redrawChart);
+    google.maps.event.addListener($scope.map, 'dragend', function() {
+      redrawChart();
+      return redrawMap();
+    });
+    return google.maps.event.addListener($scope.map, 'drag', function() {
+      return $scope.marker.setPosition($scope.map.getCenter());
+    });
   };
   initChart = function() {
     $scope.chart = new Chart;
-    return $scope.chart.render(data1);
+    return $scope.chart.on('select', redrawMap);
   };
-  redrawChart = function() {
-    var current, data, p, properties, time, values;
+  redrawChart = function(time) {
+    var current, data, p, properties, values;
     properties = $scope.properties.filter(function(p) {
       return p.containsPoint($scope.map.getCenter());
     });
@@ -83,22 +103,33 @@ appController = function($scope) {
         values: values
       }
     ];
-    return $scope.chart.render(data2);
+    $scope.chart.render(data);
+    return $scope.chart.select(time);
   };
-  window.redrawMap = function() {
-    var p, time, _i, _len, _ref, _results;
-    time = 12;
-    _ref = $scope.properties;
-    _results = [];
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      p = _ref[_i];
-      if (p.containsTime(time)) {
-        _results.push(p.render());
-      } else {
-        _results.push(p.remove());
+  redrawMap = function(time) {
+    var p, _i, _j, _len, _len1, _ref, _ref1, _results, _results1;
+    if (time >= 0) {
+      _ref = $scope.properties;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        p = _ref[_i];
+        if (p.containsTime(time)) {
+          _results.push(p.render());
+        } else {
+          _results.push(p.remove());
+        }
       }
+      return _results;
+    } else {
+      console.log('null');
+      _ref1 = $scope.properties;
+      _results1 = [];
+      for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+        p = _ref1[_j];
+        _results1.push(p.render());
+      }
+      return _results1;
     }
-    return _results;
   };
   return google.maps.event.addDomListener(window, "load", initialize);
 };

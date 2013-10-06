@@ -1,152 +1,238 @@
-
-nv.models.discreteBarChart = function() {
-  var margin = {top: 30, right: 20, bottom: 50, left: 60},
-      width = null,
-      height = null,
-      color = d3.scale.category20().range(),
-      staggerLabels = false,
-      rotateLabels = 0,
-      tooltips = true,
-      tooltip = function(key, x, y, e, graph) {
-		if (key==='cost'){
-			return '<h3>$' + Math.round(e.point.value) + '</h3>' +
-	               '<p>' +  e.point.label + " ("+ e.point.title + ')</p>'
-		}
-		else if (key === 'people')
-        return '<h3>' + Math.round(e.point.value) + ' million people </h3>' +
-               '<p>' +  e.point.label + " ("+ e.point.title + ')</p>' 
-      };
+// Modified line 131 to surface the value of the bar as an attribute 
 
 
-  var discretebar = nv.models.discreteBar(),
-      x = discretebar.xScale(),
-      y = discretebar.yScale(),
-      xAxis = nv.models.axis().scale(x).orient('bottom').highlightZero(false).showMaxMin(false),
-      yAxis = nv.models.axis().scale(y).orient('left'),
-      dispatch = d3.dispatch('tooltipShow', 'tooltipHide');
+nv.models.discreteBar = function() {
+  "use strict";
+  //============================================================
+  // Public Variables with Default Settings
+  //------------------------------------------------------------
 
-  xAxis.tickFormat(function(d) { return d });
-  yAxis.tickFormat(d3.format(',.1f'));
+  var margin = {top: 0, right: 0, bottom: 0, left: 0}
+    , width = 960
+    , height = 500
+    , id = Math.floor(Math.random() * 10000) //Create semi-unique ID in case user doesn't select one
+    , x = d3.scale.ordinal()
+    , y = d3.scale.linear()
+    , getX = function(d) { return d.x }
+    , getY = function(d) { return d.y }
+    , forceY = [0] // 0 is forced by default.. this makes sense for the majority of bar graphs... user can always do chart.forceY([]) to remove
+    , color = nv.utils.defaultColor()
+    , showValues = false
+    , valueFormat = d3.format(',.2f')
+    , xDomain
+    , yDomain
+    , xRange
+    , yRange
+    , dispatch = d3.dispatch('chartClick', 'elementClick', 'elementDblClick', 'elementMouseover', 'elementMouseout')
+    , rectClass = 'discreteBar'
+    ;
+
+  //============================================================
 
 
-  var showTooltip = function(e, offsetElement) {
-    var left = e.pos[0] + ( offsetElement.offsetLeft || 0 ),
-        top = e.pos[1] + ( offsetElement.offsetTop || 0),
-        x = xAxis.tickFormat()(discretebar.x()(e.point)),
-        y = yAxis.tickFormat()(discretebar.y()(e.point)),
-        content = tooltip(e.series.key, x, y, e, chart);
+  //============================================================
+  // Private Variables
+  //------------------------------------------------------------
 
-    nv.tooltip.show([left, top], content, e.value < 0 ? 'n' : 's');
-  };
+  var x0, y0;
 
+  //============================================================
 
-  //TODO: let user select default
-  var controlsData = [
-    { key: 'Grouped' },
-    { key: 'Stacked', disabled: true }
-  ];
 
   function chart(selection) {
     selection.each(function(data) {
-      var container = d3.select(this),
-          that = this;
-
-      var availableWidth = (width  || parseInt(container.style('width')) || 960)
-                             - margin.left - margin.right,
-          availableHeight = (height || parseInt(container.style('height')) || 400)
-                             - margin.top - margin.bottom;
+      var availableWidth = width - margin.left - margin.right,
+          availableHeight = height - margin.top - margin.bottom,
+          container = d3.select(this);
 
 
-      discretebar
-        .width(availableWidth)
-        .height(availableHeight);
+      //add series index to each data point for reference
+      data = data.map(function(series, i) {
+        series.values = series.values.map(function(point) {
+          point.series = i;
+          return point;
+        });
+        return series;
+      });
 
 
-      var wrap = container.selectAll('g.wrap.discreteBarWithAxes').data([data]);
-      var gEnter = wrap.enter().append('g').attr('class', 'wrap nvd3 discreteBarWithAxes').append('g');
-      var defsEnter = gEnter.append('defs');
+      //------------------------------------------------------------
+      // Setup Scales
 
-      gEnter.append('g').attr('class', 'x axis');
-      gEnter.append('g').attr('class', 'y axis');
-      gEnter.append('g').attr('class', 'barsWrap');
+      // remap and flatten the data for use in calculating the scales' domains
+      var seriesData = (xDomain && yDomain) ? [] : // if we know xDomain and yDomain, no need to calculate
+            data.map(function(d) {
+              return d.values.map(function(d,i) {
+                return { x: getX(d,i), y: getY(d,i), y0: d.y0 }
+              })
+            });
+
+      x   .domain(xDomain || d3.merge(seriesData).map(function(d) { return d.x }))
+          .rangeBands(xRange || [0, availableWidth], .1);
+
+      y   .domain(yDomain || d3.extent(d3.merge(seriesData).map(function(d) { return d.y }).concat(forceY)));
 
 
+      // If showValues, pad the Y axis range to account for label height
+      if (showValues) y.range(yRange || [availableHeight - (y.domain()[0] < 0 ? 12 : 0), y.domain()[1] > 0 ? 12 : 0]);
+      else y.range(yRange || [availableHeight, 0]);
 
+      //store old scales if they exist
+      x0 = x0 || x;
+      y0 = y0 || y.copy().range([y(0),y(0)]);
+
+      //------------------------------------------------------------
+
+
+      //------------------------------------------------------------
+      // Setup containers and skeleton of chart
+
+      var wrap = container.selectAll('g.nv-wrap.nv-discretebar').data([data]);
+      var wrapEnter = wrap.enter().append('g').attr('class', 'nvd3 nv-wrap nv-discretebar');
+      var gEnter = wrapEnter.append('g');
       var g = wrap.select('g');
 
+      gEnter.append('g').attr('class', 'nv-groups');
 
-      g.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+      wrap.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
-      var barsWrap = g.select('.barsWrap')
-          .datum(data.filter(function(d) { return !d.disabled }))
-
-
-      d3.transition(barsWrap).call(discretebar);
+      //------------------------------------------------------------
 
 
-      defsEnter.append('clipPath')
-          .attr('id', 'x-label-clip-' + discretebar.id())
-        .append('rect')
 
-      g.select('#x-label-clip-' + discretebar.id() + ' rect')
-          .attr('width', x.rangeBand() * (staggerLabels ? 3 : 1))
-          .attr('height', 16)
-          .attr('x', -x.rangeBand() / (staggerLabels ? 0.9 : 2 ));
-
-
-      xAxis
-        .ticks( availableWidth / 100 )
-        .tickSize(-availableHeight, 0);
-
-      g.select('.x.axis')
-          .attr('transform', 'translate(0,' + (y.range()[0] + (discretebar.showValues() ? 16 : 0)) + ')')
-      //d3.transition(g.select('.x.axis'))
-      g.select('.x.axis').transition().duration(0)
-          .call(xAxis);
-
-
-      var xTicks = g.select('.x.axis').selectAll('g');
-
-      if (staggerLabels)
-        xTicks
-            .selectAll('text')
-            //.attr('transform', function(d,i,j) { return 'translate(0,' + (j % 2 == 0 ? '0' : '12') + ')' })
-			// no staggering
-
-      if (rotateLabels)
-        xTicks
-            .selectAll('text')
-            .attr('transform', function(d,i,j) { return 'rotate(' + rotateLabels + ' 0,0)' })
-            .attr('text-anchor', 'end') //TODO: figure out why this gets changed to middle, and fix this
-
-      xTicks
-          .selectAll('text')
-          .attr('clip-path', function(d,i,j) { return rotateLabels ? '' : 'url(#x-label-clip-' + discretebar.id() + ')' });
+      //TODO: by definition, the discrete bar should not have multiple groups, will modify/remove later
+      var groups = wrap.select('.nv-groups').selectAll('.nv-group')
+          .data(function(d) { return d }, function(d) { return d.key });
+      groups.enter().append('g')
+          .style('stroke-opacity', 1e-6)
+          .style('fill-opacity', 1e-6);
+      groups.exit()
+          .transition()
+          .style('stroke-opacity', 1e-6)
+          .style('fill-opacity', 1e-6)
+          .remove();
+      groups
+          .attr('class', function(d,i) { return 'nv-group nv-series-' + i })
+          .classed('hover', function(d) { return d.hover });
+      groups
+          .transition()
+          .style('stroke-opacity', 1)
+          .style('fill-opacity', .75);
 
 
-      yAxis
-        .ticks( availableHeight / 36 )
-        .tickSize( -availableWidth, 0);
+      var bars = groups.selectAll('g.nv-bar')
+          .data(function(d) { return d.values });
 
-      d3.transition(g.select('.y.axis'))
-          .call(yAxis);
+      bars.exit().remove();
 
 
-      discretebar.dispatch.on('elementMouseover.tooltip', function(e) {
-        e.pos = [e.pos[0] +  margin.left, e.pos[1] + margin.top];
-        dispatch.tooltipShow(e);
-      });
-      if (tooltips) dispatch.on('tooltipShow', function(e) { showTooltip(e, that.parentNode) } ); // TODO: maybe merge with above?
+      var barsEnter = bars.enter().append('g')
+          .attr('transform', function(d,i,j) {
+            return 'translate(' + (x(getX(d,i)) + x.rangeBand() * .05 ) + ', ' + y(0) + ')' 
+          })              
+          .attr('value', function(d){
+            return d.value
+          })
+          .attr('label', function(d){
+            return d.label
+          })
+          .on('mouseover', function(d,i) { //TODO: figure out why j works above, but not here
+            d3.select(this).classed('hover', true);
+            dispatch.elementMouseover({
+              value: getY(d,i),
+              point: d,
+              series: data[d.series],
+              pos: [x(getX(d,i)) + (x.rangeBand() * (d.series + .5) / data.length), y(getY(d,i))],  // TODO: Figure out why the value appears to be shifted
+              pointIndex: i,
+              seriesIndex: d.series,
+              e: d3.event
+            });
+          })
+          .on('mouseout', function(d,i) {
+            d3.select(this).classed('hover', false);
+            dispatch.elementMouseout({
+              value: getY(d,i),
+              point: d,
+              series: data[d.series],
+              pointIndex: i,
+              seriesIndex: d.series,
+              e: d3.event
+            });
+          })
+          .on('click', function(d,i) {
+            dispatch.elementClick({
+              value: getY(d,i),
+              point: d,
+              series: data[d.series],
+              pos: [x(getX(d,i)) + (x.rangeBand() * (d.series + .5) / data.length), y(getY(d,i))],  // TODO: Figure out why the value appears to be shifted
+              pointIndex: i,
+              seriesIndex: d.series,
+              e: d3.event
+            });
+            d3.event.stopPropagation();
+          })
+          .on('dblclick', function(d,i) {
+            dispatch.elementDblClick({
+              value: getY(d,i),
+              point: d,
+              series: data[d.series],
+              pos: [x(getX(d,i)) + (x.rangeBand() * (d.series + .5) / data.length), y(getY(d,i))],  // TODO: Figure out why the value appears to be shifted
+              pointIndex: i,
+              seriesIndex: d.series,
+              e: d3.event
+            });
+            d3.event.stopPropagation();
+          });
 
-      discretebar.dispatch.on('elementMouseout.tooltip', function(e) {
-        dispatch.tooltipHide(e);
-      });
-      if (tooltips) dispatch.on('tooltipHide', nv.tooltip.cleanup);
+      barsEnter.append('rect')
+          .attr('height', 0)
+          .attr('width', x.rangeBand() * .9 / data.length )
+
+      if (showValues) {
+        barsEnter.append('text')
+          .attr('text-anchor', 'middle')
+          ;
+
+        bars.select('text')
+          .text(function(d,i) { return valueFormat(getY(d,i)) })
+          .transition()
+          .attr('x', x.rangeBand() * .9 / 2)
+          .attr('y', function(d,i) { return getY(d,i) < 0 ? y(getY(d,i)) - y(0) + 12 : -4 })
+          
+          ;
+      } else {
+        bars.selectAll('text').remove();
+      }
+
+      bars
+          .attr('class', function(d,i) { return getY(d,i) < 0 ? 'nv-bar negative' : 'nv-bar positive' })
+          .style('fill', function(d,i) { return d.color || color(d,i) })
+          .style('stroke', function(d,i) { return d.color || color(d,i) })
+        .select('rect')
+          .attr('class', rectClass)
+          .transition()
+          .attr('width', x.rangeBand() * .9 / data.length);
+      bars.transition()
+        //.delay(function(d,i) { return i * 1200 / data[0].values.length })
+          .attr('transform', function(d,i) {
+            var left = x(getX(d,i)) + x.rangeBand() * .05,
+                top = getY(d,i) < 0 ?
+                        y(0) :
+                        y(0) - y(getY(d,i)) < 1 ?
+                          y(0) - 1 : //make 1 px positive bars show up above y=0
+                          y(getY(d,i));
+
+              return 'translate(' + left + ', ' + top + ')'
+          })
+        .select('rect')
+          .attr('height', function(d,i) {
+            return  Math.max(Math.abs(y(getY(d,i)) - y((yDomain && yDomain[0]) || 0)) || 1)
+          });
 
 
-      //TODO: decide if this makes sense to add into all the models for ease of updating (updating without needing the selection)
-      chart.update = function() { selection.transition().call(chart); };
-      chart.container = this; // I need a reference to the container in order to have outside code check if the chart is visible or not
+      //store old scales for use in transitions on update
+      x0 = x.copy();
+      y0 = y.copy();
 
     });
 
@@ -154,17 +240,32 @@ nv.models.discreteBarChart = function() {
   }
 
 
+  //============================================================
+  // Expose Public Variables
+  //------------------------------------------------------------
+
   chart.dispatch = dispatch;
-  chart.discretebar = discretebar; // really just makign the accessible for discretebar.dispatch, may rethink slightly
-  chart.xAxis = xAxis;
-  chart.yAxis = yAxis;
 
-  d3.rebind(chart, discretebar, 'x', 'y', 'xDomain', 'yDomain', 'forceX', 'forceY', 'id', 'showValues', 'valueFormat');
+  chart.options = nv.utils.optionsFunc.bind(chart);
+  
+  chart.x = function(_) {
+    if (!arguments.length) return getX;
+    getX = _;
+    return chart;
+  };
 
+  chart.y = function(_) {
+    if (!arguments.length) return getY;
+    getY = _;
+    return chart;
+  };
 
   chart.margin = function(_) {
     if (!arguments.length) return margin;
-    margin = _;
+    margin.top    = typeof _.top    != 'undefined' ? _.top    : margin.top;
+    margin.right  = typeof _.right  != 'undefined' ? _.right  : margin.right;
+    margin.bottom = typeof _.bottom != 'undefined' ? _.bottom : margin.bottom;
+    margin.left   = typeof _.left   != 'undefined' ? _.left   : margin.left;
     return chart;
   };
 
@@ -180,37 +281,78 @@ nv.models.discreteBarChart = function() {
     return chart;
   };
 
+  chart.xScale = function(_) {
+    if (!arguments.length) return x;
+    x = _;
+    return chart;
+  };
+
+  chart.yScale = function(_) {
+    if (!arguments.length) return y;
+    y = _;
+    return chart;
+  };
+
+  chart.xDomain = function(_) {
+    if (!arguments.length) return xDomain;
+    xDomain = _;
+    return chart;
+  };
+
+  chart.yDomain = function(_) {
+    if (!arguments.length) return yDomain;
+    yDomain = _;
+    return chart;
+  };
+
+  chart.xRange = function(_) {
+    if (!arguments.length) return xRange;
+    xRange = _;
+    return chart;
+  };
+
+  chart.yRange = function(_) {
+    if (!arguments.length) return yRange;
+    yRange = _;
+    return chart;
+  };
+
+  chart.forceY = function(_) {
+    if (!arguments.length) return forceY;
+    forceY = _;
+    return chart;
+  };
+
   chart.color = function(_) {
     if (!arguments.length) return color;
-    color = _;
-    discretebar.color(_);
+    color = nv.utils.getColor(_);
     return chart;
   };
 
-  chart.staggerLabels = function(_) {
-    if (!arguments.length) return staggerLabels;
-    staggerLabels = _;
+  chart.id = function(_) {
+    if (!arguments.length) return id;
+    id = _;
     return chart;
   };
 
-  chart.rotateLabels = function(_) {
-    if (!arguments.length) return rotateLabels;
-    rotateLabels = _;
+  chart.showValues = function(_) {
+    if (!arguments.length) return showValues;
+    showValues = _;
     return chart;
   };
 
-  chart.tooltips = function(_) {
-    if (!arguments.length) return tooltips;
-    tooltips = _;
+  chart.valueFormat= function(_) {
+    if (!arguments.length) return valueFormat;
+    valueFormat = _;
     return chart;
   };
 
-  chart.tooltipContent = function(_) {
-    if (!arguments.length) return tooltip;
-    tooltip = _;
+  chart.rectClass= function(_) {
+    if (!arguments.length) return rectClass;
+    rectClass = _;
     return chart;
   };
-
+  //============================================================
 
 
   return chart;

@@ -1,3 +1,5 @@
+# a hacky global function because i can't figure out how to hook up events to the chart
+
 appController = ($scope) ->
   console.log 'start'
   # a fake function that returns the data
@@ -26,17 +28,37 @@ appController = ($scope) ->
         [37.7709295, -122.4154155]
         [37.7859295, -122.4304155]
       ]
+    ,
+      "type": "maxDispatchDistanceMiles"
+      "value": 7
+      "weight": 3
+      "timeRange": [0, 8]
+      "geofences": [
+        [37.789989014339184, -122.39744284375001]
+        [37.785783512835465, -122.38697149975587]
+        [37.77316557237902, -122.40121939404298] 
+        [37.78469818327388, -122.41272070629884]
+        [37.78985335673589, -122.39744284375001]
+      ]
     ]
 
   initialize = ->
     console.log 'init'
     initMap()
     initChart()
+    initPointer()
 
     initProperties()
 
+    redrawChart()
     redrawMap()
     
+
+  initPointer = ->
+    $scope.marker = new google.maps.Marker
+      position: $scope.map.getCenter()
+      map: $scope.map
+
   initProperties = ->
     $scope.properties = for d in getData()
       new Property d, $scope.map    
@@ -49,14 +71,20 @@ appController = ($scope) ->
       mapTypeId : google.maps.MapTypeId.TERRAIN
 
     # listen to drag event to update Chart  
-    google.maps.event.addListener $scope.map, 'dragend', redrawChart
+    google.maps.event.addListener $scope.map, 'dragend', ->
+      redrawChart()
+      redrawMap()
     
+    # listen to drag event to update marker
+    google.maps.event.addListener $scope.map, 'drag', ->
+      $scope.marker.setPosition $scope.map.getCenter()
+
   initChart = ->
     $scope.chart = new Chart
-    $scope.chart.render(data1)
-
+    $scope.chart.on 'select', redrawMap
   
-  redrawChart = =>
+  redrawChart = (time) =>
+
     properties = $scope.properties.filter (p) ->
       p.containsPoint $scope.map.getCenter()
         
@@ -75,18 +103,21 @@ appController = ($scope) ->
       values: values
     ]
 
-    $scope.chart.render(data2)
+    $scope.chart.render(data)
+    $scope.chart.select(time)
 
-    
-    
+  redrawMap = (time) =>
+  
+    if time >= 0 
+      for p in $scope.properties
+        if p.containsTime time
+          p.render()
+        else
+          p.remove()    
+    else 
+      console.log 'null'
+      p.render() for p in $scope.properties
 
-  window.redrawMap = () =>
-    time = 12 # get current time
-    for p in $scope.properties
-      if p.containsTime time
-        p.render()
-      else
-        p.remove()    
 
   google.maps.event.addDomListener window, "load", initialize
   
