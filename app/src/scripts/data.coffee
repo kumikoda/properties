@@ -24,7 +24,7 @@ data = [
     ]
   ,
     "type": "maxDispatchDistanceMiles"
-    "value": 8
+    "value": 1
     "weight": 3
     "timeRange": [0, 8]
     "geofences": [

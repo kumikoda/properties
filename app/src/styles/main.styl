@@ -31,12 +31,18 @@ body
 
 #legend
   font-size 30px
-  color blue
-  .icon-sign-blank
+  .badge
     display block
+    width 50%
+    text-align center
+    margin auto
 
 #title, #legend, #values
   max-width 50%
+
+svg text
+  font size 15px !important 
+
 
 @media (max-width: 767px)
   h2 
@@ -44,3 +50,10 @@ body
 
   #map-canvas 
     height 300px
+
+
+  #legend 
+    .badge
+      display initial
+    h2
+      text-align right

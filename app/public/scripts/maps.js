@@ -29,7 +29,7 @@ Map = (function(_super) {
     this.legend.render();
     this.map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(document.getElementById('title'));
     this.map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(document.getElementById('values'));
-    this.map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(document.getElementById('legend'));
+    this.map.controls[google.maps.ControlPosition.RIGHT_TOP].push(document.getElementById('legend'));
     nv.utils.windowResize(this.centerMap);
     google.maps.event.addListener(this.map, 'dragend', function() {
       return _this.trigger('moved');
@@ -37,13 +37,13 @@ Map = (function(_super) {
     return google.maps.event.addListener(this.map, 'drag', this.redrawPointer);
   };
 
-  Map.prototype.redrawPointer = function() {
-    return this.marker.setPosition(this.map.getCenter());
-  };
-
   Map.prototype.updateValues = function(time, value) {
     $('#values .currentTime').html(time);
     return $('#values .currentValue').text(value);
+  };
+
+  Map.prototype.redrawPointer = function() {
+    return this.marker.setPosition(this.map.getCenter());
   };
 
   Map.prototype.centerMap = function() {
@@ -69,11 +69,11 @@ Legend = (function(_super) {
   };
 
   Legend.prototype.render = function() {
-    var color, _i, _len, _results;
+    var color, i, _i, _len, _results;
     _results = [];
-    for (_i = 0, _len = colors.length; _i < _len; _i++) {
-      color = colors[_i];
-      _results.push(this.$el.append("<icon class='icon-sign-blank'></icon>"));
+    for (i = _i = 0, _len = colors.length; _i < _len; i = ++_i) {
+      color = colors[i];
+      _results.push(this.$el.append("<span class='badge' style='background:#" + color + ("'>" + i + "</icon>")));
     }
     return _results;
   };
@@ -82,7 +82,7 @@ Legend = (function(_super) {
 
 })(Backbone.View);
 
-colors = ['F7F4F9', 'E7E1EF', 'D4B9DA', 'C994C7', 'DF65B0', 'E7298A', 'CE1256', '980043', '67001F'];
+colors = ['E7E1EF', 'D4B9DA', 'C994C7', 'DF65B0', 'E7298A', 'CE1256', '980043', '67001F'];
 
 Property = (function() {
   function Property(options, map) {

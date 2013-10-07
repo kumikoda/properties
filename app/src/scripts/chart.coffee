@@ -16,7 +16,7 @@ class Chart extends Backbone.View
       .x((d) -> d.label)
       .y((d) -> d.value)
       .showValues(false)
-      .color(['grey'])  
+      .color(['#666'])  
       .tooltips(false)
 
     # axis label distance to hack the label to show up

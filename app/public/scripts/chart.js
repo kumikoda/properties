@@ -28,7 +28,7 @@ Chart = (function(_super) {
       return d.label;
     }).y(function(d) {
       return d.value;
-    }).showValues(false).color(['grey']).tooltips(false);
+    }).showValues(false).color(['#666']).tooltips(false);
     this.chart.yAxis.axisLabel(this.options.yLabel).axisLabelDistance(50).tickFormat(function(d, i) {
       return d;
     });
