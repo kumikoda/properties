@@ -1,5 +1,9 @@
-.container {
-  max-width: 100%;
+#container {
+  max-width: 1200px;
+  margin: auto;
+}
+body {
+  padding: 0;
 }
 #map-canvas {
   height: 500px;
@@ -24,4 +28,24 @@
 .selected {
   stroke: #f00 !important;
   fill: #f00 !important;
+}
+#legend {
+  font-size: 30px;
+  color: #00f;
+}
+#legend .icon-sign-blank {
+  display: block;
+}
+#title,
+#legend,
+#values {
+  max-width: 50%;
+}
+@media (max-width: 767px) {
+  h2 {
+    font-size: 28px;
+  }
+  #map-canvas {
+    height: 300px;
+  }
 }

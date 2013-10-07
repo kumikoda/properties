@@ -29,17 +29,17 @@ App = (function(_super) {
     this.map = new Map;
     this.redrawMap();
     this.redrawChart();
-    this.map.updateLegend(this.chart.time, this.chart.getValue());
+    this.map.updateValues(this.chart.time, this.chart.getValue());
     return this.listen();
   };
 
   App.prototype.listen = function() {
     this.listenTo(this.map, 'moved', function() {
       this.redrawChart();
-      return this.map.updateLegend(this.chart.time, this.chart.getValue());
+      return this.map.updateValues(this.chart.time, this.chart.getValue());
     });
     return this.listenTo(this.chart, 'moved', function() {
-      this.map.updateLegend(this.chart.time, this.chart.getValue());
+      this.map.updateValues(this.chart.time, this.chart.getValue());
       return this.redrawMap();
     });
   };

@@ -13,16 +13,16 @@ class App extends Backbone.Router
     @redrawChart()
 
     # adjust map to reflect current time and value
-    @map.updateLegend @chart.time, @chart.getValue()
+    @map.updateValues @chart.time, @chart.getValue()
 
     @listen()
 
   listen : ->
     @listenTo @map, 'moved', ->
       @redrawChart()
-      @map.updateLegend @chart.time, @chart.getValue()
+      @map.updateValues @chart.time, @chart.getValue()
     @listenTo @chart, 'moved', ->
-      @map.updateLegend @chart.time, @chart.getValue()
+      @map.updateValues @chart.time, @chart.getValue()
       @redrawMap() 
 
   redrawChart : ->

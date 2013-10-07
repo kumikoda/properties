@@ -11,11 +11,15 @@ class Map extends Backbone.View
       position: @map.getCenter()
       map: @map
 
+    @legend = new Legend
+    @legend.render()
+
     # Set map title and legends
     @map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push document.getElementById('title')
+    @map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push document.getElementById('values')
     @map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push document.getElementById('legend')
-
-    nv.utils.windowResize @redrawPointer
+    
+    nv.utils.windowResize @centerMap 
 
     # listen to drag event to update Chart  
     google.maps.event.addListener @map, 'dragend', => 
@@ -24,13 +28,24 @@ class Map extends Backbone.View
     # listen to drag event to update marker
     google.maps.event.addListener @map, 'drag', @redrawPointer
 
-  redrawPointer : =>
-    @marker.setPosition @map.getCenter()
 
-  updateLegend : (time, value) ->
-    $('#legend .currentTime').html time
-    $('#legend .currentValue').text value
+  updateValues : (time, value) ->
+    $('#values .currentTime').html time
+    $('#values .currentValue').text value
 
+  centerMap : =>
+    @map.setCenter @marker.getPosition() 
+
+
+class Legend extends Backbone.View
+  el : '#legend'
+
+  initialize : ->
+    console.log 'new legend'
+
+  render : ->
+    for color in colors 
+      @$el.append "<icon class='icon-sign-blank'></icon>"
 
 
 colors = [
