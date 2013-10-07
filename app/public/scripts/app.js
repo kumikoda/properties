@@ -22,16 +22,26 @@ App = (function(_super) {
       }
       return _results;
     })();
-    this.chart = new Chart;
+    this.chart = new Chart({
+      yLabel: 'Max Dispatch Distance (Miles)',
+      xLabel: 'Time (hour)'
+    });
     this.map = new Map;
     this.redrawMap();
     this.redrawChart();
+    this.map.updateLegend(this.chart.time, this.chart.getValue());
     return this.listen();
   };
 
   App.prototype.listen = function() {
-    this.listenTo(this.map, 'moved', this.redrawChart);
-    return this.listenTo(this.chart, 'moved', this.redrawMap);
+    this.listenTo(this.map, 'moved', function() {
+      this.redrawChart();
+      return this.map.updateLegend(this.chart.time, this.chart.getValue());
+    });
+    return this.listenTo(this.chart, 'moved', function() {
+      this.map.updateLegend(this.chart.time, this.chart.getValue());
+      return this.redrawMap();
+    });
   };
 
   App.prototype.redrawChart = function() {
@@ -69,8 +79,9 @@ App = (function(_super) {
   };
 
   App.prototype.redrawMap = function() {
-    var p, time, _i, _j, _len, _len1, _ref1, _ref2, _results, _results1;
+    var p, time, value, _i, _j, _len, _len1, _ref1, _ref2, _results, _results1;
     time = this.chart.time;
+    value = null;
     if (time >= 0) {
       _ref1 = this.properties;
       _results = [];

@@ -6,11 +6,21 @@
   height 500px
   width 100%
 
-svg 
+#chart
   display block
+  &:hover
+    cursor move
+  &:active
+    cursor move
+
 
 #chart svg
   height 300px
+
+  .nv-bar:nth-child(13)
+    fill red !important
+    stroke red !important
+
 
 .selected
   stroke red !important

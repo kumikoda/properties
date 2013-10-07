@@ -4,17 +4,26 @@ class App extends Backbone.Router
     @properties = (new Property d, null for d in data)
 
     @chart = new Chart
+      yLabel : 'Max Dispatch Distance (Miles)'
+      xLabel : 'Time (hour)'
     @map = new Map  
 
     # initial rendering
     @redrawMap()
     @redrawChart()
 
+    # adjust map to reflect current time and value
+    @map.updateLegend @chart.time, @chart.getValue()
+
     @listen()
 
   listen : ->
-    @listenTo @map, 'moved', @redrawChart
-    @listenTo @chart, 'moved', @redrawMap 
+    @listenTo @map, 'moved', ->
+      @redrawChart()
+      @map.updateLegend @chart.time, @chart.getValue()
+    @listenTo @chart, 'moved', ->
+      @map.updateLegend @chart.time, @chart.getValue()
+      @redrawMap() 
 
   redrawChart : ->
     properties = @properties.filter (p) =>
@@ -35,10 +44,11 @@ class App extends Backbone.Router
       values: values
     ]
 
-    @chart.render(data)
+    @chart.render data
 
   redrawMap : ->
-    time = @chart.time 
+    time = @chart.time
+    value = null 
 
     if time >= 0 
       for p in @properties

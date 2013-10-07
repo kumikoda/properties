@@ -11,6 +11,10 @@ class Map extends Backbone.View
       position: @map.getCenter()
       map: @map
 
+    # Set map title and legends
+    @map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push document.getElementById('title')
+    @map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push document.getElementById('legend')
+
     nv.utils.windowResize @redrawPointer
 
     # listen to drag event to update Chart  
@@ -22,6 +26,10 @@ class Map extends Backbone.View
 
   redrawPointer : =>
     @marker.setPosition @map.getCenter()
+
+  updateLegend : (time, value) ->
+    $('#legend .currentTime').html time
+    $('#legend .currentValue').text value
 
 
 

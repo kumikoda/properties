@@ -24,6 +24,8 @@ Map = (function(_super) {
       position: this.map.getCenter(),
       map: this.map
     });
+    this.map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(document.getElementById('title'));
+    this.map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(document.getElementById('legend'));
     nv.utils.windowResize(this.redrawPointer);
     google.maps.event.addListener(this.map, 'dragend', function() {
       return _this.trigger('moved');
@@ -33,6 +35,11 @@ Map = (function(_super) {
 
   Map.prototype.redrawPointer = function() {
     return this.marker.setPosition(this.map.getCenter());
+  };
+
+  Map.prototype.updateLegend = function(time, value) {
+    $('#legend .currentTime').html(time);
+    return $('#legend .currentValue').text(value);
   };
 
   return Map;

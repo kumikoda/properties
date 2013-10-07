@@ -5,11 +5,21 @@
   height: 500px;
   width: 100%;
 }
-svg {
+#chart {
   display: block;
+}
+#chart:hover {
+  cursor: move;
+}
+#chart:active {
+  cursor: move;
 }
 #chart svg {
   height: 300px;
+}
+#chart svg .nv-bar:nth-child(13) {
+  fill: #f00 !important;
+  stroke: #f00 !important;
 }
 .selected {
   stroke: #f00 !important;

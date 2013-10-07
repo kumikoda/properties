@@ -12,6 +12,7 @@ block scripts
   script(src='//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.0.0/backbone-min.js')
   script(src='/vendor/d3.min.js')
   script(src='/vendor/nv.d3.min.js')
+  script(src='/vendor/jquery.hammer.min.js')  
 
   script(src='https://maps.googleapis.com/maps/api/js?key=AIzaSyDh51Oc4-bpuZ0kTHP5qNXit_yn7_wCOGc&sensor=true&libraries=geometry')
   
@@ -23,6 +24,15 @@ block scripts
 
 block content
   .container
+    #title 
+      h2 Max Dispatch Distance (Miles)
+
+    #legend
+      h2 Value : 
+        time.currentValue 0
+      h2 Time : 
+        time.currentTime 0
+
     #map-canvas
 
     #chart
