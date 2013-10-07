@@ -74,9 +74,11 @@ Chart = (function(_super) {
     dx = e.gesture.deltaX;
     level = Math.floor(dx / 35);
     if (level > this.level) {
+      console.log('right ' + level);
       this.level = level;
       return this.shiftRight();
     } else if (level < this.level) {
+      console.log('left ' + level);
       this.level = level;
       return this.shiftLeft();
     }
@@ -89,7 +91,11 @@ Chart = (function(_super) {
   Chart.prototype.shiftRight = function() {
     this.data[0].values.unshift(this.data[0].values.pop());
     this.render(this.data, false);
-    this.time = Math.abs((this.time - 1) % 24);
+    if (this.time === 0) {
+      this.time = 23;
+    } else {
+      this.time = this.time - 1;
+    }
     return this.trigger('moved');
   };
 

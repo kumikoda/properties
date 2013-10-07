@@ -41,8 +41,6 @@ class Chart extends Backbone.View
     nv.addGraph -> @chart
     nv.utils.windowResize @chart.update
 
-    
-
   select : (time) ->
     $('svg g.nv-bar').attr 'class', 'nv-bar positive' 
     $('svg g[label=time]').attr 'nv-bar positive selected'
@@ -50,12 +48,14 @@ class Chart extends Backbone.View
   
   drag : (e) =>
     dx = e.gesture.deltaX
-    level = Math.floor dx/35 
-    
+    level = Math.floor dx/35
+
     if level > @level
+      console.log 'right ' + level
       @level = level        
       @shiftRight()
     else if level < @level 
+      console.log 'left ' + level
       @level = level
       @shiftLeft()
 
@@ -65,7 +65,12 @@ class Chart extends Backbone.View
   shiftRight : ->
     @data[0].values.unshift @data[0].values.pop()
     @render(@data, false)
-    @time = Math.abs (@time-1)%24
+    
+    if @time is 0
+      @time = 23
+    else 
+      @time = @time - 1
+
     @trigger 'moved'
 
   shiftLeft : ->
