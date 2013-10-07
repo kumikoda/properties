@@ -1,5 +1,13 @@
-class Chart extends EventEmitter
-  constructor : () ->
+class Chart extends Backbone.View
+  el : '#chart'
+
+  events : 
+    'mousedown' : 'mousedown'
+    'moving' : 'moving'
+
+  initialize : () ->
+    @time = (new Date).getHours()
+
     @d3 = d3.select("#chart svg")
 
     @chart = nv.models.discreteBarChart()
@@ -13,18 +21,10 @@ class Chart extends EventEmitter
 
     @chart.xAxis.axisLabel('Time').tickFormat (d, i) -> d
 
-    
   render : (data)->
-
     @d3.datum(data).transition().duration(500).call @chart
     nv.addGraph -> @chart
     nv.utils.windowResize @chart.update
-
-    $('svg g').on 'click', (e) => 
-      $('.selected').attr 'class', 'nv-bar positive'
-      $(e.currentTarget).attr 'class', 'nv-bar positive selected'
-      @emit 'select', $(e.currentTarget).attr 'label'
-
 
   select : (time) ->
     $('svg g.nv-bar').attr 'class', 'nv-bar positive' 
