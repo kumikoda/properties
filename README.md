@@ -1,9 +1,6 @@
-# A simple node skeleton project 
+# Setup
 
-Express, Coffeescript front/back, Jade for templating, Stylus, Mongo/ose for DB.  
-
-## Dependencies
-
-1. mongo
-	
-  brew install mongodb
+1. clone
+2. ```$ npm install```
+3. ```$ node-dev server.coffee```
+4. go to ```localhost:3000```
