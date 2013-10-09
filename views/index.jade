@@ -1,0 +1,46 @@
+extends layout
+
+block styles
+  link(href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.no-icons.min.css", rel="stylesheet")
+  link(href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css", rel="stylesheet")
+  link(href='/vendor/nv.d3.css',rel='stylesheet')
+  link(href='/styles/main.css',rel='stylesheet')
+
+block scripts
+  script(src='//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js')
+  script(src='//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js')
+  script(src='//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.0.0/backbone-min.js')
+  script(src='/vendor/d3.min.js')
+  script(src='/vendor/nv.d3.min.js')
+  script(src='/vendor/jquery.hammer.min.js')  
+
+  script(src='https://maps.googleapis.com/maps/api/js?key=AIzaSyDh51Oc4-bpuZ0kTHP5qNXit_yn7_wCOGc&sensor=true&libraries=geometry')
+  
+  script(src='/lib/discreteBarChart.js')
+  script(src='/scripts/data.js')  
+  script(src='/scripts/chart.js')
+  script(src='/scripts/maps.js')
+  script(src='/scripts/app.js')
+
+block content
+  #container
+    #title 
+      h2 Max Dispatch Distance (Miles)
+
+    #legend
+      h2 Legend
+
+    #values
+      h2 Value : 
+        time.currentValue 0
+      h2 Time : 
+        time.currentTime 0
+
+    #map-canvas
+
+    #chart
+      svg
+
+
+
+

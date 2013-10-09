@@ -1,0 +1,59 @@
+#container 
+  max-width 1200px
+  margin auto
+
+body
+  padding 0
+
+#map-canvas 
+  height 500px
+  width 100%
+
+#chart
+  display block
+  &:hover
+    cursor move
+  &:active
+    cursor move
+
+
+#chart svg
+  height 300px
+
+  .nv-bar:nth-child(13)
+    fill red !important
+    stroke red !important
+
+
+.selected
+  stroke red !important
+  fill red !important
+
+#legend
+  font-size 30px
+  .badge
+    display block
+    width 50%
+    text-align center
+    margin auto
+
+#title, #legend, #values
+  max-width 50%
+
+svg text
+  font size 15px !important 
+
+
+@media (max-width: 767px)
+  h2 
+    font-size 28px
+
+  #map-canvas 
+    height 300px
+
+
+  #legend 
+    .badge
+      display initial
+    h2
+      text-align right
