@@ -9,43 +9,45 @@ body {
   height: 500px;
   width: 100%;
 }
-#chart {
-  display: block;
-}
-#chart:hover {
-  cursor: move;
-}
-#chart:active {
-  cursor: move;
-}
 #chart svg {
-  height: 300px;
+  height: 250px;
 }
-#chart svg .nv-bar:nth-child(13) {
-  fill: #f00 !important;
-  stroke: #f00 !important;
-}
-.selected {
-  stroke: #f00 !important;
-  fill: #f00 !important;
-}
-#legend {
-  font-size: 30px;
-}
-#legend .badge {
+/*************************/
+#legend i {
   display: block;
-  width: 50%;
+  font-size: 24px;
+}
+#title {
+  display: inline-block;
   text-align: center;
-  margin: auto;
+  margin-left: 10px;
 }
-#title,
-#legend,
-#values {
-  max-width: 50%;
+#time {
+  float: right;
+  margin: 20px 0;
 }
-svg text {
-  font: size 15px !important;
+#time h1 {
+  display: inline-block;
 }
+#time .group {
+  display: inline-block;
+}
+#time .time-selectors {
+  width: 200px;
+}
+#time .dropdown-menu {
+  min-width: 0px;
+}
+#time .colon {
+  padding: 6px;
+}
+#time .selected-apm {
+  margin-left: 10px;
+}
+#currentValue {
+  font-size: 36px;
+}
+/*************************/
 @media (max-width: 767px) {
   h2 {
     font-size: 28px;

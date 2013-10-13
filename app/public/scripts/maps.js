@@ -9,6 +9,8 @@ Map = (function(_super) {
   function Map() {
     this.centerMap = __bind(this.centerMap, this);
     this.redrawPointer = __bind(this.redrawPointer, this);
+    this.hideInfo = __bind(this.hideInfo, this);
+    this.showInfo = __bind(this.showInfo, this);
     _ref = Map.__super__.constructor.apply(this, arguments);
     return _ref;
   }
@@ -25,21 +27,36 @@ Map = (function(_super) {
       position: this.map.getCenter(),
       map: this.map
     });
+    this.infowindow = new google.maps.InfoWindow;
+    google.maps.event.addListener(this.marker, 'click', this.showInfo);
     this.legend = new Legend;
     this.legend.render();
-    this.map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(document.getElementById('title'));
-    this.map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(document.getElementById('values'));
-    this.map.controls[google.maps.ControlPosition.RIGHT_TOP].push(document.getElementById('legend'));
+    this.map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(document.getElementById('legend'));
     nv.utils.windowResize(this.centerMap);
+    google.maps.event.addListener(this.map, 'dragstart', function() {
+      return _this.hideInfo();
+    });
     google.maps.event.addListener(this.map, 'dragend', function() {
-      return _this.trigger('moved');
+      _this.trigger('moved');
+      return _this.showInfo();
     });
     return google.maps.event.addListener(this.map, 'drag', this.redrawPointer);
   };
 
-  Map.prototype.updateValues = function(time, value) {
-    $('#values .currentTime').html(time);
-    return $('#values .currentValue').text(value);
+  Map.prototype.setInfoContent = function(value) {
+    if (value) {
+      return this.infowindow.setContent("<span id='currentValue'> " + String(value + " Miles </span>"));
+    } else {
+      return this.infowindow.setContent("<span id='currentValue'>No Data</span>");
+    }
+  };
+
+  Map.prototype.showInfo = function() {
+    return this.infowindow.open(this.map, this.marker);
+  };
+
+  Map.prototype.hideInfo = function() {
+    return this.infowindow.close(this.map, this.marker);
   };
 
   Map.prototype.redrawPointer = function() {
@@ -64,16 +81,12 @@ Legend = (function(_super) {
 
   Legend.prototype.el = '#legend';
 
-  Legend.prototype.initialize = function() {
-    return console.log('new legend');
-  };
-
   Legend.prototype.render = function() {
     var color, i, _i, _len, _results;
     _results = [];
     for (i = _i = 0, _len = colors.length; _i < _len; i = ++_i) {
       color = colors[i];
-      _results.push(this.$el.append("<span class='badge' style='background:#" + color + ("'>" + i + "</icon>")));
+      _results.push(this.$el.append("<i class='icon-sign-blank' style='color:#" + color + "'></icon>"));
     }
     return _results;
   };
@@ -82,7 +95,7 @@ Legend = (function(_super) {
 
 })(Backbone.View);
 
-colors = ['E7E1EF', 'D4B9DA', 'C994C7', 'DF65B0', 'E7298A', 'CE1256', '980043', '67001F'];
+colors = ['FFF7EC', 'FEE8C8', 'FDD49E', 'FDBB84', 'FC8D59', 'EF6548', 'D7301F', 'B30000', '7F0000'];
 
 Property = (function() {
   function Property(options, map) {
@@ -105,8 +118,9 @@ Property = (function() {
       strokeOpacity: 0.8,
       strokeWeight: 2,
       fillColor: colors[this.options.value],
-      fillOpacity: 0.5
+      fillOpacity: 0.7
     });
+    google.maps.event.addListener(this.polygon, 'click', this.showInfo);
   }
 
   Property.prototype.render = function(map) {

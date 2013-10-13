@@ -1,63 +1,62 @@
 class App extends Backbone.Router
   initialize : ->
-    console.log 'hello world!'
     @properties = (new Property d, null for d in data)
 
     @chart = new Chart
-      yLabel : 'Max Dispatch Distance (Miles)'
-      xLabel : 'Time (hour)'
     @map = new Map  
+    @time = new Timepicker
 
     # initial rendering
-    @redrawMap()
-    @redrawChart()
+    @now = @time.getTime()
 
-    # adjust map to reflect current time and value
-    @map.updateValues @chart.time, @chart.getValue()
+    @redrawChart @now 
+    @redrawMap @now 
+    @updateValue @currentValue
+    @map.showInfo()
 
     @listen()
 
   listen : ->
     @listenTo @map, 'moved', ->
       @redrawChart()
-      @map.updateValues @chart.time, @chart.getValue()
-    @listenTo @chart, 'moved', ->
-      @map.updateValues @chart.time, @chart.getValue()
-      @redrawMap() 
+      @updateValue @currentValue
+    @listenTo @time, 'time', (newTime) ->
+      @now = newTime
+      @redrawMap newTime
+      @redrawChart newTime 
 
-  redrawChart : ->
+  redrawChart : (time=@now) ->
     properties = @properties.filter (p) =>
       p.containsPoint @map.map.getCenter()
         
-    values = for time in [0..23]
+    values = for hour in [0..23]
       
       # find the max value at this time
       current = undefined
-      for p in properties when p.containsTime time
+      for p in properties when p.containsTime hour
         if not current or p.weight > current.weight 
           current = p
       
-      label: time
+      label: hour
       value: current?.options.value ? null
 
     data = [
       values: values
     ]
 
-    @chart.render data
+    @currentValue = values[time].value
+    @chart.render data, time
 
-  redrawMap : ->
-    time = @chart.time
-    value = null 
+  redrawMap : (time=@time) =>
+    # repaint the content
+    for p in @properties
+      if p.containsTime time
+        p.render(@map.map)
+      else
+        p.remove()    
 
-    if time >= 0 
-      for p in @properties
-        if p.containsTime time
-          p.render(@map.map)
-        else
-          p.remove()    
-    else 
-      p.render(@map.map) for p in @properties
-
+  updateValue : (value) ->
+    # update the info window
+    @map.setInfoContent value
 
 app = new App

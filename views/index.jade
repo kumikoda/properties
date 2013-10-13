@@ -1,7 +1,7 @@
 extends layout
 
 block styles
-  link(href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.no-icons.min.css", rel="stylesheet")
+  link(href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css", rel="stylesheet")
   link(href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css", rel="stylesheet")
   link(href='/vendor/nv.d3.css',rel='stylesheet')
   link(href='/styles/main.css',rel='stylesheet')
@@ -10,35 +10,99 @@ block scripts
   script(src='//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js')
   script(src='//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js')
   script(src='//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.0.0/backbone-min.js')
+  script(src='/vendor/bootstrap.min.js')
   script(src='/vendor/d3.min.js')
   script(src='/vendor/nv.d3.min.js')
-  script(src='/vendor/jquery.hammer.min.js')  
 
   // dev
-  script(src='https://maps.googleapis.com/maps/api/js?key=AIzaSyDAJyU7LWO56u8556pCCILlmB45qpcCbJc&sensor=true&libraries=geometry')
+  //script(src='https://maps.googleapis.com/maps/api/js?key=AIzaSyDAJyU7LWO56u8556pCCILlmB45qpcCbJc&sensor=true&libraries=geometry')
 
   // localhost 
-  //script(src='https://maps.googleapis.com/maps/api/js?key=AIzaSyDh51Oc4-bpuZ0kTHP5qNXit_yn7_wCOGc&sensor=true&libraries=geometry')
+  script(src='https://maps.googleapis.com/maps/api/js?key=AIzaSyDh51Oc4-bpuZ0kTHP5qNXit_yn7_wCOGc&sensor=true&libraries=geometry')
   
   script(src='/lib/discreteBarChart.js')
   script(src='/scripts/data.js')  
+  script(src='/scripts/time.js')
   script(src='/scripts/chart.js')
   script(src='/scripts/maps.js')
   script(src='/scripts/app.js')
 
 block content
   #container
+
     #title 
-      h2 Max Dispatch Distance (Miles)
+      h1 Max Dispatch Distance
+    
+    #time 
+      .input-group.time-selectors
+        .btn-group
+          button(type="button", class="btn btn-default btn-lg dropdown-toggle selected-hour", data-toggle="dropdown") 1
+          ul.dropdown-menu
+            li.hour(data-value='1')
+              a 1
+            li.hour(data-value='2')
+              a 2
+            li.hour(data-value='3')
+              a 3
+            li.hour(data-value='4')
+              a 4    
+            li.hour(data-value='5')
+              a 5    
+            li.hour(data-value='6')
+              a 6    
+            li.hour(data-value='7')
+              a 7    
+            li.hour(data-value='8')
+              a 8    
+            li.hour(data-value='9')
+              a 9    
+            li.hour(data-value='10')
+              a 10
+            li.hour(data-value='11')
+              a 11    
+            li.hour(data-value='12')
+              a 12
+        
+        strong.colon :
 
+        .btn-group
+          button(type="button", class="btn btn-default btn-lg dropdown-toggle selected-minute", data-toggle="dropdown") 00
+          ul.dropdown-menu
+            li.minute(data-value='0')
+              a 00
+            li.minute(data-value='5')
+              a 05
+            li.minute(data-value='10')
+              a 10
+            li.minute(data-value='15')
+              a 15
+            li.minute(data-value='20')
+              a 20   
+            li.minute(data-value='25')
+              a 25
+            li.minute(data-value='30')
+              a 30
+            li.minute(data-value='35')
+              a 35
+            li.minute(data-value='40')
+              a 40
+            li.minute(data-value='45')
+              a 45
+            li.minute(data-value='50')
+              a 50   
+            li.minute(data-value='55')
+              a 55   
+          
+        .btn-group
+          button(type="button", class="btn btn-default btn-lg dropdown-toggle selected-apm", data-toggle="dropdown") AM
+          ul.dropdown-menu
+            li.apm(data-value='AM')
+              a AM
+            li.apm(data-value='PM')
+              a PM
+
+        
     #legend
-      h2 Legend
-
-    #values
-      h2 Value : 
-        time.currentValue 0
-      h2 Time : 
-        time.currentTime 0
 
     #map-canvas
 
@@ -46,5 +110,7 @@ block content
       svg
 
 
+
+    
 
 

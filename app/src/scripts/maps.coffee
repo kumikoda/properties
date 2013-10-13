@@ -11,26 +11,39 @@ class Map extends Backbone.View
       position: @map.getCenter()
       map: @map
 
+    @infowindow = new google.maps.InfoWindow    
+    google.maps.event.addListener @marker, 'click', @showInfo
+
     @legend = new Legend
     @legend.render()
 
-    # Set map title and legends
-    @map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push document.getElementById('title')
-    @map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push document.getElementById('values')
-    @map.controls[google.maps.ControlPosition.RIGHT_TOP].push document.getElementById('legend')
+    # Set Legend
+    @map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push document.getElementById('legend')
     
     nv.utils.windowResize @centerMap 
+
+    google.maps.event.addListener @map, 'dragstart', =>
+      @hideInfo()
 
     # listen to drag event to update Chart  
     google.maps.event.addListener @map, 'dragend', => 
       @trigger 'moved'
+      @showInfo()
       
     # listen to drag event to update marker
     google.maps.event.addListener @map, 'drag', @redrawPointer
 
-  updateValues : (time, value) ->
-    $('#values .currentTime').html time
-    $('#values .currentValue').text value
+  setInfoContent : (value) ->
+    if value 
+      @infowindow.setContent "<span id='currentValue'> " + String value + " Miles </span>"    
+    else
+      @infowindow.setContent "<span id='currentValue'>No Data</span>"    
+     
+
+  showInfo : =>
+    @infowindow.open @map, @marker
+  hideInfo : =>
+    @infowindow.close @map, @marker
 
   redrawPointer : =>
     @marker.setPosition @map.getCenter()
@@ -40,25 +53,12 @@ class Map extends Backbone.View
 
 class Legend extends Backbone.View
   el : '#legend'
-
-  initialize : ->
-    console.log 'new legend'
-
   render : ->
     for color,i in colors
-      @$el.append "<span class='badge' style='background:#"+color+"'>#{i}</icon>"
+      @$el.append "<i class='icon-sign-blank' style='color:#"+color+"'></icon>"
 
 
-colors = [
- 'E7E1EF'
-, 'D4B9DA'
-, 'C994C7'
-, 'DF65B0'
-, 'E7298A'
-, 'CE1256'
-, '980043'
-, '67001F'
-]
+colors = ['FFF7EC', 'FEE8C8', 'FDD49E', 'FDBB84', 'FC8D59', 'EF6548', 'D7301F', 'B30000', '7F0000']
 
 
 class Property 
@@ -71,12 +71,15 @@ class Property
       strokeOpacity: 0.8
       strokeWeight: 2
       fillColor: colors[@options.value]
-      fillOpacity: 0.5
+      fillOpacity: 0.7
+
+    
+    google.maps.event.addListener @polygon, 'click', @showInfo
   
   render : (map) ->
     @polygon.setMap map 
 
-  remove : () ->
+  remove : ->
     @polygon.setMap null
 
   containsPoint : (point) ->
