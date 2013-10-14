@@ -9,6 +9,9 @@ body {
   padding: 0;
   height: 100%;
 }
+body.modal-open {
+  margin: 0;
+}
 .map-canvas {
   height: 50%;
   width: 100%;
@@ -34,63 +37,71 @@ body {
   font-size: 28px;
   margin-left: 5px;
 }
-.title {
+.header {
+  padding: 0 10px;
+}
+.header .title {
   float: left;
   display: inline-block;
   text-align: center;
+}
+.header .help {
+  float: left;
+  margin: 30px 0 0 10px;
+}
+.header .time {
+  float: right;
+  margin: 20px 0 0 0;
+  display: inline-block;
+}
+.header .time .group {
+  display: inline-block;
+}
+.header .time .dropdown-menu {
+  min-width: 0px;
+}
+.header .time .colon {
+  padding: 6px;
+}
+.header .time .btn-group .selected-apm {
   margin-left: 10px;
 }
 .chart svg text {
   font-size: 14px;
 }
-.time {
-  float: right;
-  margin: 20px 10px 0 0;
-  display: inline-block;
-}
-.time .group {
-  display: inline-block;
-}
-.time .dropdown-menu {
-  min-width: 0px;
-}
-.time .colon {
-  padding: 6px;
-}
-.time .btn-group .selected-apm {
-  margin-left: 10px;
-}
-#currentValue {
-  font-size: 32px;
-}
 /*************************/
 @media (max-width: 767px) {
   .map-canvas {
-    height: 50%;
+    height: 45%;
   }
   .chart {
-    height: 36%;
+    height: 39%;
   }
   .header {
-    height: 14%;
+    height: 16%;
   }
-  .title {
+  .header .help {
+    margin: 0;
+    text-align: center;
+    float: none;
+  }
+  .header .title {
     width: 100%;
     text-align: center;
     margin-left: 0;
   }
-  .title h1 {
+  .header .title h1 {
     font-size: 30px;
     margin-top: 10px;
     margin-bottom: 5px;
   }
-  .time {
-    margin: 10px 0;
+  .header .time {
+    margin: 5px 0;
     width: 100%;
     float: none;
     text-align: center;
   }
-  .time .time-selectors {
+  .header .time .time-selectors {
     width: 100%;
   }
   .chart svg text {
@@ -106,8 +117,5 @@ body {
   .legend .range i {
     font-size: 20px;
     margin-left: 3px;
-  }
-  #currentValue {
-    font-size: 24px;
   }
 }

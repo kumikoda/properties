@@ -9,7 +9,8 @@ class Map extends Backbone.View
       position: @map.getCenter()
       map: @map
 
-    @infowindow = new google.maps.InfoWindow    
+    @infowindow = new google.maps.InfoWindow
+    @infoTemplate = Handlebars.compile $("#info-template").html()
     
     @legend = new Legend
       range : @options.range
@@ -34,16 +35,12 @@ class Map extends Backbone.View
     google.maps.event.addListener @map, 'drag', @redrawPointer
 
     # maintain map center on window resizing 
-    nv.utils.windowResize =>
-      @centerMap()
-      @refreshInfo()
+    nv.utils.windowResize @centerMap
 
-  setInfoContent : (value) ->
-    if value 
-      @infowindow.setContent "<span id='currentValue'> " + String value + " miles</span>"    
-    else
-      @infowindow.setContent "<span id='currentValue'>No Data</span>"    
-     
+  setInfoContent : (value) ->  
+    @infowindow.setContent @infoTemplate 
+      value : value 
+   
   refreshInfo : ->
     @hideInfo()
     @showInfo()

@@ -27,6 +27,7 @@ Map = (function(_super) {
       map: this.map
     });
     this.infowindow = new google.maps.InfoWindow;
+    this.infoTemplate = Handlebars.compile($("#info-template").html());
     this.legend = new Legend({
       range: this.options.range
     });
@@ -44,18 +45,13 @@ Map = (function(_super) {
       return _this.showInfo();
     });
     google.maps.event.addListener(this.map, 'drag', this.redrawPointer);
-    return nv.utils.windowResize(function() {
-      _this.centerMap();
-      return _this.refreshInfo();
-    });
+    return nv.utils.windowResize(this.centerMap);
   };
 
   Map.prototype.setInfoContent = function(value) {
-    if (value) {
-      return this.infowindow.setContent("<span id='currentValue'> " + String(value + " miles</span>"));
-    } else {
-      return this.infowindow.setContent("<span id='currentValue'>No Data</span>");
-    }
+    return this.infowindow.setContent(this.infoTemplate({
+      value: value
+    }));
   };
 
   Map.prototype.refreshInfo = function() {

@@ -5,10 +5,10 @@ class Property
     @polygon = new google.maps.Polygon
       paths : paths
       strokeColor: 'black'
-      strokeOpacity: 0.8
-      strokeWeight: 2
+      strokeOpacity: 0
+      strokeWeight: 1
       fillColor: 'black'
-      fillOpacity: 0.7
+      fillOpacity: 0.6
 
     @setColor()
 
@@ -48,10 +48,25 @@ class Property
       strokeColor : color
       fillColor : color
 
+  highlight : ->
+    @polygon.setOptions 
+      strokeOpacity : 1
+      strokeWeight : 4
+      
+  unhighlight : ->
+    @polygon.setOptions 
+      strokeOpacity : 0
+      strokeWeight : 1
+
 
 class Properties 
   constructor : (data) ->
     @list = (new Property d, null for d in data) 
+
+  resetHighlight : ->
+    for p in @list
+      p.unhighlight()
+
 
   intersecting : (point) ->
     @list.filter (p) =>

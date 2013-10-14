@@ -65,6 +65,7 @@ App = (function(_super) {
     if (time == null) {
       time = this.now;
     }
+    this.properties.resetHighlight();
     properties = this.properties.intersecting(this.map.map.getCenter());
     values = (function() {
       var _i, _j, _len, _ref1, _results;
@@ -79,13 +80,18 @@ App = (function(_super) {
             }
           }
         }
+        if (hour === this.now) {
+          if (current != null) {
+            current.highlight();
+          }
+        }
         _results.push({
           label: hour,
           value: (_ref1 = current != null ? current.options.value : void 0) != null ? _ref1 : null
         });
       }
       return _results;
-    })();
+    }).call(this);
     data = [
       {
         values: values

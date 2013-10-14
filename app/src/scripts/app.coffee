@@ -41,6 +41,7 @@ class App extends Backbone.Router
       p.setColor @map.legend.getColor p.options.value
 
   redrawChart : (time=@now) ->
+    @properties.resetHighlight()
     properties = @properties.intersecting @map.map.getCenter()
     
     # find the maximal weight value at each time    
@@ -50,6 +51,8 @@ class App extends Backbone.Router
         if not current or p.weight > current.weight 
           current = p
       
+
+      current?.highlight() if hour is @now
       label: hour
       value: current?.options.value ? null
 

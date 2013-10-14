@@ -18,10 +18,10 @@ Property = (function() {
     this.polygon = new google.maps.Polygon({
       paths: paths,
       strokeColor: 'black',
-      strokeOpacity: 0.8,
-      strokeWeight: 2,
+      strokeOpacity: 0,
+      strokeWeight: 1,
       fillColor: 'black',
-      fillOpacity: 0.7
+      fillOpacity: 0.6
     });
     this.setColor();
     google.maps.event.addListener(this.polygon, 'click', this.showInfo);
@@ -70,6 +70,20 @@ Property = (function() {
     });
   };
 
+  Property.prototype.highlight = function() {
+    return this.polygon.setOptions({
+      strokeOpacity: 1,
+      strokeWeight: 4
+    });
+  };
+
+  Property.prototype.unhighlight = function() {
+    return this.polygon.setOptions({
+      strokeOpacity: 0,
+      strokeWeight: 1
+    });
+  };
+
   return Property;
 
 })();
@@ -87,6 +101,17 @@ Properties = (function() {
       return _results;
     })();
   }
+
+  Properties.prototype.resetHighlight = function() {
+    var p, _i, _len, _ref, _results;
+    _ref = this.list;
+    _results = [];
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      p = _ref[_i];
+      _results.push(p.unhighlight());
+    }
+    return _results;
+  };
 
   Properties.prototype.intersecting = function(point) {
     var _this = this;
