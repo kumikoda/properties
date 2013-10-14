@@ -14,8 +14,6 @@ Timepicker = (function(_super) {
     return _ref;
   }
 
-  Timepicker.prototype.el = '#time';
-
   Timepicker.prototype.events = {
     'click .hour': 'setHour',
     'click .minute': 'setMinute',
@@ -23,6 +21,16 @@ Timepicker = (function(_super) {
   };
 
   Timepicker.prototype.initialize = function() {
+    var el;
+    el = this.options.el;
+    this.setCurrentTime();
+    this.$hour = this.$el.find('.selected-hour');
+    this.$minute = this.$el.find('.selected-minute');
+    this.$apm = this.$el.find('.selected-apm');
+    return this.render();
+  };
+
+  Timepicker.prototype.setCurrentTime = function() {
     var minute, now, r;
     now = new Date();
     this.hour = now.getHours();
@@ -40,12 +48,8 @@ Timepicker = (function(_super) {
       this.minute = minute - r;
     }
     if (this.minute < 10) {
-      this.minute = '0' + this.minute;
+      return this.minute = '0' + this.minute;
     }
-    this.$hour = this.$el.find('.selected-hour');
-    this.$minute = this.$el.find('.selected-minute');
-    this.$apm = this.$el.find('.selected-apm');
-    return this.render();
   };
 
   Timepicker.prototype.setHour = function(e) {

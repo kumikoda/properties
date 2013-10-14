@@ -1,5 +1,4 @@
 class Timepicker extends Backbone.View
-  el : '#time'
 
   events : 
     'click .hour' : 'setHour'
@@ -7,7 +6,19 @@ class Timepicker extends Backbone.View
     'click .apm' : 'setApm'
 
   initialize : ->
-    # set current time
+    el = @options.el
+    
+    # initialeze time to now
+    @setCurrentTime()
+
+    # cache jquery selectors
+    @$hour = @$el.find '.selected-hour'
+    @$minute = @$el.find '.selected-minute'
+    @$apm = @$el.find '.selected-apm'
+
+    @render() 
+
+  setCurrentTime : ->
     now = new Date()
     @hour = now.getHours()
     if @hour > 12
@@ -26,19 +37,14 @@ class Timepicker extends Backbone.View
     if @minute < 10
       @minute = '0' + @minute
 
-    # cache jquery selectors
-    @$hour = @$el.find '.selected-hour'
-    @$minute = @$el.find '.selected-minute'
-    @$apm = @$el.find '.selected-apm'
-
-    @render() 
-
   setHour : (e) =>
     @hour = $(e.currentTarget).data 'value'
     @render()
+
   setMinute : (e) =>
     @minute = $(e.currentTarget).data 'value'
     @render()
+
   setApm : (e) =>
     @apm = $(e.currentTarget).data 'value'
     @render()

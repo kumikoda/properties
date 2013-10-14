@@ -1,21 +1,20 @@
 class Chart extends Backbone.View
-  el : '#chart'
 
   initialize : (@options) ->
     @time = 0
     # create chart using nvd3
-    @d3 = d3.select("#chart svg")
+    @d3 = d3.select @options.el
     @chart = nv.models.discreteBarChart()
       .x((d) -> d.label)
       .y((d) -> d.value)
       .showValues(false)
       .color(['#666'])
-      .forceY([0,15])
+      .forceY([0,@options.range[1]])
       .margin({left:25})
 
     # axis label distance to hack the label to show up
     @chart.yAxis.tickFormat (d, i) -> d
-    @chart.xAxis.tickFormat (d, i) -> d
+    @chart.xAxis.axisLabel('Max Dispatch Distance in Miles').tickFormat (d, i) -> d
 
   render : (@data, @time=@time)->
     @data[0].values[@time].color = 'blue' # set the new time

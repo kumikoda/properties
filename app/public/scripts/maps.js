@@ -1,4 +1,4 @@
-var Legend, Map, Property, colors, _ref, _ref1,
+var Legend, Map, colorSets, colors, _ref, _ref1,
   __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -15,32 +15,36 @@ Map = (function(_super) {
     return _ref;
   }
 
-  Map.prototype.initialize = function() {
-    var _this = this;
-    this.map = new google.maps.Map($('#map-canvas')[0], {
+  Map.prototype.initialize = function(options) {
+    this.options = options;
+    this.map = new google.maps.Map($(this.options.el)[0], {
       zoom: 13,
-      center: new google.maps.LatLng(37.7749295, -122.4194155),
+      center: this.options.center,
       mapTypeId: google.maps.MapTypeId.TERRAIN
     });
-    this.properties = [];
     this.marker = new google.maps.Marker({
       position: this.map.getCenter(),
       map: this.map
     });
     this.infowindow = new google.maps.InfoWindow;
-    google.maps.event.addListener(this.marker, 'click', this.showInfo);
-    this.legend = new Legend;
-    this.legend.render();
-    this.map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(document.getElementById('legend'));
-    nv.utils.windowResize(this.centerMap);
-    google.maps.event.addListener(this.map, 'dragstart', function() {
-      return _this.hideInfo();
+    this.legend = new Legend({
+      range: this.options.range
     });
+    this.legend.render();
+    this.map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push($('.legend')[0]);
+    return this.listen();
+  };
+
+  Map.prototype.listen = function() {
+    var _this = this;
+    google.maps.event.addListener(this.marker, 'click', this.showInfo);
+    google.maps.event.addListener(this.map, 'dragstart', this.hideInfo);
     google.maps.event.addListener(this.map, 'dragend', function() {
       _this.trigger('moved');
       return _this.showInfo();
     });
-    return google.maps.event.addListener(this.map, 'drag', this.redrawPointer);
+    google.maps.event.addListener(this.map, 'drag', this.redrawPointer);
+    return nv.utils.windowResize(this.centerMap);
   };
 
   Map.prototype.setInfoContent = function(value) {
@@ -79,73 +83,67 @@ Legend = (function(_super) {
     return _ref1;
   }
 
-  Legend.prototype.el = '#legend';
+  Legend.prototype.el = '.legend';
+
+  Legend.prototype.initialize = function(options) {
+    var high, low, x;
+    this.options = options;
+    this.d = this.options.range[1] - this.options.range[0] + 1;
+    if (colorSets[this.d]) {
+      this.colorSet = colorSets[this.d];
+      this.stepSize = 1;
+      return this.ranges = (function() {
+        var _i, _ref2, _ref3, _results;
+        _results = [];
+        for (x = _i = _ref2 = this.options.range[0], _ref3 = options.range[1]; _ref2 <= _ref3 ? _i <= _ref3 : _i >= _ref3; x = _ref2 <= _ref3 ? ++_i : --_i) {
+          _results.push(x);
+        }
+        return _results;
+      }).call(this);
+    } else {
+      this.colorSet = colorSets[9];
+      this.stepSize = Math.round(this.d / 9);
+      return this.ranges = (function() {
+        var _i, _results;
+        _results = [];
+        for (x = _i = 0; _i <= 9; x = ++_i) {
+          low = this.stepSize * x;
+          high = this.stepSize * (x + 1) - 1;
+          _results.push("" + low + " - " + high);
+        }
+        return _results;
+      }).call(this);
+    }
+  };
 
   Legend.prototype.render = function() {
-    var color, i, _i, _len, _results;
+    var color, i, range, _i, _len, _ref2, _results;
+    _ref2 = this.ranges;
     _results = [];
-    for (i = _i = 0, _len = colors.length; _i < _len; i = ++_i) {
-      color = colors[i];
-      _results.push(this.$el.append("<i class='icon-sign-blank' style='color:#" + color + "'></icon>"));
+    for (i = _i = 0, _len = _ref2.length; _i < _len; i = ++_i) {
+      range = _ref2[i];
+      color = this.colorSet[i];
+      _results.push(this.$el.append(("<div class='range'><span>" + range + "</span><i class='icon-sign-blank' style='color:#") + color + "'></icon></div>"));
     }
     return _results;
+  };
+
+  Legend.prototype.getColor = function(x) {
+    return this.colorSet[Math.floor(x / this.stepSize) - 1];
   };
 
   return Legend;
 
 })(Backbone.View);
 
-colors = ['FFF7EC', 'FEE8C8', 'FDD49E', 'FDBB84', 'FC8D59', 'EF6548', 'D7301F', 'B30000', '7F0000'];
+colorSets = {
+  9: ['F7FCFD', 'E0ECF4', 'BFD3E6', '9EBCDA', '8C96C6', '8C6BB1', '88419D', '810F7C', '4D004B'],
+  8: ['F7FCFD', 'E0ECF4', 'BFD3E6', '9EBCDA', '8C96C6', '8C6BB1', '88419D', '6E016B'],
+  7: ['EDF8FB', 'BFD3E6', '9EBCDA', '8C96C6', '8C6BB1', '88419D', '6E016B'],
+  6: ['EDF8FB', 'BFD3E6', '9EBCDA', '8C96C6', '8856A7', '810F7C'],
+  5: ['EDF8FB', 'B3CDE3', '8C96C6', '8856A7', '810F7C'],
+  4: ['EDF8FB', 'B3CDE3', '8C96C6', '88419D'],
+  3: ['E0ECF4', '9EBCDA', '8856A7']
+};
 
-Property = (function() {
-  function Property(options, map) {
-    var paths, point;
-    this.options = options;
-    this.map = map;
-    paths = (function() {
-      var _i, _len, _ref2, _results;
-      _ref2 = this.options.geofences;
-      _results = [];
-      for (_i = 0, _len = _ref2.length; _i < _len; _i++) {
-        point = _ref2[_i];
-        _results.push(new google.maps.LatLng(point[0], point[1]));
-      }
-      return _results;
-    }).call(this);
-    this.polygon = new google.maps.Polygon({
-      paths: paths,
-      strokeColor: colors[this.options.value],
-      strokeOpacity: 0.8,
-      strokeWeight: 2,
-      fillColor: colors[this.options.value],
-      fillOpacity: 0.7
-    });
-    google.maps.event.addListener(this.polygon, 'click', this.showInfo);
-  }
-
-  Property.prototype.render = function(map) {
-    return this.polygon.setMap(map);
-  };
-
-  Property.prototype.remove = function() {
-    return this.polygon.setMap(null);
-  };
-
-  Property.prototype.containsPoint = function(point) {
-    return google.maps.geometry.poly.containsLocation(point, this.polygon);
-  };
-
-  Property.prototype.containsTime = function(time) {
-    var time1, time2;
-    time1 = this.options.timeRange[0];
-    time2 = this.options.timeRange[1];
-    if (time2 > time1) {
-      return (time1 <= time && time <= time2);
-    } else {
-      return !((time2 < time && time < time1));
-    }
-  };
-
-  return Property;
-
-})();
+colors = ['F7FCFD', 'E0ECF4', 'BFD3E6', '9EBCDA', '8C96C6', '8C6BB1', '88419D', '810F7C', '4D004B'];

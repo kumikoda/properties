@@ -13,19 +13,20 @@ App = (function(_super) {
   }
 
   App.prototype.initialize = function() {
-    var d;
-    this.properties = (function() {
-      var _i, _len, _results;
-      _results = [];
-      for (_i = 0, _len = data.length; _i < _len; _i++) {
-        d = data[_i];
-        _results.push(new Property(d, null));
-      }
-      return _results;
-    })();
-    this.chart = new Chart;
-    this.map = new Map;
-    this.time = new Timepicker;
+    this.properties = new Properties(data);
+    this.chart = new Chart({
+      el: ".chart svg",
+      range: this.properties.getRange()
+    });
+    this.map = new Map({
+      el: ".map-canvas",
+      center: this.properties.getCenter(),
+      range: this.properties.getRange()
+    });
+    this.time = new Timepicker({
+      el: ".time"
+    });
+    this.colorPolygons();
     this.now = this.time.getTime();
     this.redrawChart(this.now);
     this.redrawMap(this.now);
@@ -46,15 +47,23 @@ App = (function(_super) {
     });
   };
 
+  App.prototype.colorPolygons = function() {
+    var p, _i, _len, _ref1, _results;
+    _ref1 = this.properties.list;
+    _results = [];
+    for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+      p = _ref1[_i];
+      _results.push(p.setColor(this.map.legend.getColor(p.options.value)));
+    }
+    return _results;
+  };
+
   App.prototype.redrawChart = function(time) {
-    var current, data, hour, p, properties, values,
-      _this = this;
+    var current, data, hour, p, properties, values;
     if (time == null) {
       time = this.now;
     }
-    properties = this.properties.filter(function(p) {
-      return p.containsPoint(_this.map.map.getCenter());
-    });
+    properties = this.properties.intersecting(this.map.map.getCenter());
     values = (function() {
       var _i, _j, _len, _ref1, _results;
       _results = [];
@@ -62,7 +71,7 @@ App = (function(_super) {
         current = void 0;
         for (_j = 0, _len = properties.length; _j < _len; _j++) {
           p = properties[_j];
-          if (p.containsTime(hour)) {
+          if (p.spansTime(hour)) {
             if (!current || p.weight > current.weight) {
               current = p;
             }
@@ -87,13 +96,13 @@ App = (function(_super) {
   App.prototype.redrawMap = function(time) {
     var p, _i, _len, _ref1, _results;
     if (time == null) {
-      time = this.time;
+      time = this.now;
     }
-    _ref1 = this.properties;
+    _ref1 = this.properties.list;
     _results = [];
     for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
       p = _ref1[_i];
-      if (p.containsTime(time)) {
+      if (p.spansTime(time)) {
         _results.push(p.render(this.map.map));
       } else {
         _results.push(p.remove());

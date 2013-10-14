@@ -60,7 +60,7 @@ data = [
     ]
   ,
     "type": "maxDispatchDistanceMiles"
-    "value": 6
+    "value": 2
     "weight": 3
     "timeRange": [0, 8]
     "geofences": [
@@ -72,7 +72,7 @@ data = [
     ]
   ,
     "type": "maxDispatchDistanceMiles"
-    "value": 3
+    "value": 9
     "weight": 3
     "timeRange": [8, 22]
     "geofences": [

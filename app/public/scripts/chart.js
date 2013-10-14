@@ -10,23 +10,21 @@ Chart = (function(_super) {
     return _ref;
   }
 
-  Chart.prototype.el = '#chart';
-
   Chart.prototype.initialize = function(options) {
     this.options = options;
     this.time = 0;
-    this.d3 = d3.select("#chart svg");
+    this.d3 = d3.select(this.options.el);
     this.chart = nv.models.discreteBarChart().x(function(d) {
       return d.label;
     }).y(function(d) {
       return d.value;
-    }).showValues(false).color(['#666']).forceY([0, 15]).margin({
+    }).showValues(false).color(['#666']).forceY([0, this.options.range[1]]).margin({
       left: 25
     });
     this.chart.yAxis.tickFormat(function(d, i) {
       return d;
     });
-    return this.chart.xAxis.tickFormat(function(d, i) {
+    return this.chart.xAxis.axisLabel('Max Dispatch Distance in Miles').tickFormat(function(d, i) {
       return d;
     });
   };

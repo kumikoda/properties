@@ -1,14 +1,24 @@
 class App extends Backbone.Router
   initialize : ->
-    @properties = (new Property d, null for d in data)
+    @properties = new Properties data
 
     @chart = new Chart
-    @map = new Map  
+      el : ".chart svg"
+      range : @properties.getRange()
+    
+    @map = new Map
+      el : ".map-canvas"
+      center : @properties.getCenter()
+      range : @properties.getRange() 
+
     @time = new Timepicker
+      el : ".time"
+
+    # fill polygons with correct colors
+    @colorPolygons()
 
     # initial rendering
     @now = @time.getTime()
-
     @redrawChart @now 
     @redrawMap @now 
     @updateValue @currentValue
@@ -25,15 +35,17 @@ class App extends Backbone.Router
       @redrawMap newTime
       @redrawChart newTime 
 
+  colorPolygons : ->
+    for p in @properties.list
+      p.setColor @map.legend.getColor p.options.value
+
   redrawChart : (time=@now) ->
-    properties = @properties.filter (p) =>
-      p.containsPoint @map.map.getCenter()
-        
+    properties = @properties.intersecting @map.map.getCenter()
+    
+    # find the maximal weight value at each time    
     values = for hour in [0..23]
-      
-      # find the max value at this time
       current = undefined
-      for p in properties when p.containsTime hour
+      for p in properties when p.spansTime hour
         if not current or p.weight > current.weight 
           current = p
       
@@ -47,10 +59,10 @@ class App extends Backbone.Router
     @currentValue = values[time].value
     @chart.render data, time
 
-  redrawMap : (time=@time) =>
-    # repaint the content
-    for p in @properties
-      if p.containsTime time
+  redrawMap : (time=@now) =>
+    # show only properties that spans current time
+    for p in @properties.list
+      if p.spansTime time
         p.render(@map.map)
       else
         p.remove()    
