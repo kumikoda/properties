@@ -1,42 +1,56 @@
-.container 
+#container 
   max-width 1200px
   margin auto
+  height 100%
+  min-width 460px
 
-body
+html, body
   padding 0
+  height 100%
 
 .map-canvas 
-  height 450px
+  height 50%
   width 100%
 
-.chart svg
-  height 250px
+.chart
+  height 40%
+
+.header 
+  height 10%
 
 /*************************/
 
-
 .legend
+  background white
+  border 1px solid grey
+  padding 8px
+  border-radius 5px
   .range 
     text-align right
-  i 
-    font-size 24px
-    margin-left 5px
+    .range-label
+      font-size 16px
+    i 
+      font-size 28px
+      margin-left 5px
   
 .title
+  float left
   display inline-block
   text-align center
   margin-left 10px
 
+.chart
+  svg text
+    font-size 14px
 
 .time
   float right
   margin 20px 0
+  display inline-block
   h1
     display inline-block
   .group
     display inline-block
-  .time-selectors
-    width 200px
   .dropdown-menu
     min-width 0px
   .colon
@@ -45,21 +59,53 @@ body
     margin-left 10px
 
 #currentValue
-  font-size 36px
+  font-size 32px
 
-  
 /*************************/
 
 @media (max-width: 767px)
-  h2 
-    font-size 28px
 
   .map-canvas 
-    height 300px
+    height 50%
+
+  .chart
+    height 36%
+
+  .header 
+    height 14%
 
 
-  .legend 
-    .badge
-      display initial
-    h2
-      text-align right
+  .title 
+    width 100%
+    text-align center
+    h1
+      font-size 30px
+      margin-top 10px
+      margin-bottom 5px
+
+  .time
+    margin 10px 0
+    width 100%
+    float none
+    text-align center
+    .time-selectors
+      width 100%
+
+  .chart
+    svg text
+      font-size 12px
+
+  .legend
+    padding 5px
+    border-radius 5px
+    .range 
+      .range-label
+        font-size 16px
+      i 
+        font-size 20px
+        margin-left 3px
+
+  #currentValue
+    font-size 24px
+
+    

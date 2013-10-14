@@ -44,15 +44,23 @@ Map = (function(_super) {
       return _this.showInfo();
     });
     google.maps.event.addListener(this.map, 'drag', this.redrawPointer);
-    return nv.utils.windowResize(this.centerMap);
+    return nv.utils.windowResize(function() {
+      _this.centerMap();
+      return _this.refreshInfo();
+    });
   };
 
   Map.prototype.setInfoContent = function(value) {
     if (value) {
-      return this.infowindow.setContent("<span id='currentValue'> " + String(value + " Miles </span>"));
+      return this.infowindow.setContent("<span id='currentValue'> " + String(value + " miles</span>"));
     } else {
       return this.infowindow.setContent("<span id='currentValue'>No Data</span>");
     }
+  };
+
+  Map.prototype.refreshInfo = function() {
+    this.hideInfo();
+    return this.showInfo();
   };
 
   Map.prototype.showInfo = function() {
@@ -123,7 +131,7 @@ Legend = (function(_super) {
     for (i = _i = 0, _len = _ref2.length; _i < _len; i = ++_i) {
       range = _ref2[i];
       color = this.colorSet[i];
-      _results.push(this.$el.append(("<div class='range'><span>" + range + "</span><i class='icon-sign-blank' style='color:#") + color + "'></icon></div>"));
+      _results.push(this.$el.append(("<div class='range'><span class='range-label'>" + range + "</span><i class='icon-sign-blank' style='color:#") + color + "'></icon></div>"));
     }
     return _results;
   };

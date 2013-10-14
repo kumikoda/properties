@@ -1,4 +1,5 @@
 var Chart, _ref,
+  __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
@@ -6,6 +7,7 @@ Chart = (function(_super) {
   __extends(Chart, _super);
 
   function Chart() {
+    this.setTickOptions = __bind(this.setTickOptions, this);
     _ref = Chart.__super__.constructor.apply(this, arguments);
     return _ref;
   }
@@ -24,9 +26,25 @@ Chart = (function(_super) {
     this.chart.yAxis.tickFormat(function(d, i) {
       return d;
     });
-    return this.chart.xAxis.axisLabel('Max Dispatch Distance in Miles').tickFormat(function(d, i) {
-      return d;
-    });
+    this.chart.xAxis.axisLabel('Max Dispatch Distance over time');
+    this.setTickOptions();
+    return $(window).resize(this.setTickOptions);
+  };
+
+  Chart.prototype.setTickOptions = function() {
+    if ($(window).width() < 767) {
+      return this.chart.xAxis.tickFormat(function(d, i) {
+        if (d % 2) {
+          return null;
+        } else {
+          return d;
+        }
+      });
+    } else {
+      return this.chart.xAxis.tickFormat(function(d, i) {
+        return d;
+      });
+    }
   };
 
   Chart.prototype.render = function(data, time) {

@@ -14,7 +14,22 @@ class Chart extends Backbone.View
 
     # axis label distance to hack the label to show up
     @chart.yAxis.tickFormat (d, i) -> d
-    @chart.xAxis.axisLabel('Max Dispatch Distance in Miles').tickFormat (d, i) -> d
+    @chart.xAxis.axisLabel('Max Dispatch Distance over time')
+    @setTickOptions()
+
+    # adjust display options based on window resize
+    $( window ).resize @setTickOptions
+    
+  setTickOptions : =>
+    if $(window).width() < 767
+      @chart.xAxis.tickFormat (d,i) -> 
+        if d%2 
+          null 
+        else 
+          d 
+    else
+      @chart.xAxis.tickFormat (d,i) -> d
+
 
   render : (@data, @time=@time)->
     @data[0].values[@time].color = 'blue' # set the new time

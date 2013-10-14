@@ -13,4 +13,3 @@ app.get '/graph', (req,res) ->
 # Server
 app.listen process.env.PORT || 3000, ->
   console.log 'APP listening on port 3000'
-

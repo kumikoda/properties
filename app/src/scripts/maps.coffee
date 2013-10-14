@@ -34,14 +34,20 @@ class Map extends Backbone.View
     google.maps.event.addListener @map, 'drag', @redrawPointer
 
     # maintain map center on window resizing 
-    nv.utils.windowResize @centerMap
+    nv.utils.windowResize =>
+      @centerMap()
+      @refreshInfo()
 
   setInfoContent : (value) ->
     if value 
-      @infowindow.setContent "<span id='currentValue'> " + String value + " Miles </span>"    
+      @infowindow.setContent "<span id='currentValue'> " + String value + " miles</span>"    
     else
       @infowindow.setContent "<span id='currentValue'>No Data</span>"    
      
+  refreshInfo : ->
+    @hideInfo()
+    @showInfo()
+
   showInfo : =>
     @infowindow.open @map, @marker
   
@@ -78,7 +84,7 @@ class Legend extends Backbone.View
   render : () ->
     for range,i in @ranges
       color = @colorSet[i] 
-      @$el.append "<div class='range'><span>#{range}</span><i class='icon-sign-blank' style='color:#"+color+"'></icon></div>"
+      @$el.append "<div class='range'><span class='range-label'>#{range}</span><i class='icon-sign-blank' style='color:#"+color+"'></icon></div>"
 
   getColor : (x) -> 
     @colorSet[ Math.floor(x/@stepSize)-1 ]

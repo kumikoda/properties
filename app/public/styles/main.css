@@ -1,42 +1,60 @@
-.container {
+#container {
   max-width: 1200px;
   margin: auto;
+  height: 100%;
+  min-width: 460px;
 }
+html,
 body {
   padding: 0;
+  height: 100%;
 }
 .map-canvas {
-  height: 450px;
+  height: 50%;
   width: 100%;
 }
-.chart svg {
-  height: 250px;
+.chart {
+  height: 40%;
+}
+.header {
+  height: 10%;
 }
 /*************************/
+.legend {
+  background: #fff;
+  border: 1px solid #808080;
+  padding: 8px;
+  border-radius: 5px;
+}
 .legend .range {
   text-align: right;
 }
-.legend i {
-  font-size: 24px;
+.legend .range .range-label {
+  font-size: 16px;
+}
+.legend .range i {
+  font-size: 28px;
   margin-left: 5px;
 }
 .title {
+  float: left;
   display: inline-block;
   text-align: center;
   margin-left: 10px;
 }
+.chart svg text {
+  font-size: 14px;
+}
 .time {
   float: right;
   margin: 20px 0;
+  display: inline-block;
 }
 .time h1 {
   display: inline-block;
 }
 .time .group {
   display: inline-block;
-}
-.time .time-selectors {
-  width: 200px;
 }
 .time .dropdown-menu {
   min-width: 0px;
@@ -48,20 +66,52 @@ body {
   margin-left: 10px;
 }
 #currentValue {
-  font-size: 36px;
+  font-size: 32px;
 }
 /*************************/
 @media (max-width: 767px) {
-  h2 {
-    font-size: 28px;
-  }
   .map-canvas {
-    height: 300px;
+    height: 50%;
   }
-  .legend .badge {
-    display: initial;
+  .chart {
+    height: 36%;
   }
-  .legend h2 {
-    text-align: right;
+  .header {
+    height: 14%;
+  }
+  .title {
+    width: 100%;
+    text-align: center;
+  }
+  .title h1 {
+    font-size: 30px;
+    margin-top: 10px;
+    margin-bottom: 5px;
+  }
+  .time {
+    margin: 10px 0;
+    width: 100%;
+    float: none;
+    text-align: center;
+  }
+  .time .time-selectors {
+    width: 100%;
+  }
+  .chart svg text {
+    font-size: 12px;
+  }
+  .legend {
+    padding: 5px;
+    border-radius: 5px;
+  }
+  .legend .range .range-label {
+    font-size: 16px;
+  }
+  .legend .range i {
+    font-size: 20px;
+    margin-left: 3px;
+  }
+  #currentValue {
+    font-size: 24px;
   }
 }
