@@ -11,11 +11,12 @@ class Chart extends Backbone.View
       .showValues(false)
       .color(['#666'])
       .forceY([0,@options.range[1]])
-      .margin({left:25})
+      .margin({left:50})
+      .tooltips(false)
 
     # axis label distance to hack the label to show up
-    @chart.yAxis.tickFormat (d, i) -> d
-    @chart.xAxis.axisLabel('Max Dispatch Distance over time')
+    @chart.yAxis.axisLabelDistance(50).axisLabel('Max Dispatch Distance (miles)').tickFormat (d, i) -> d
+    @chart.xAxis.axisLabel('Time (hours)')
     @setTickOptions()
 
     # adjust display options based on window resize

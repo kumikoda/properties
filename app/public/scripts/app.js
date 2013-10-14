@@ -44,7 +44,8 @@ App = (function(_super) {
     return this.listenTo(this.time, 'time', function(newTime) {
       this.now = newTime;
       this.redrawMap(newTime);
-      return this.redrawChart(newTime);
+      this.redrawChart(newTime);
+      return this.updateValue(this.currentValue);
     });
   };
 

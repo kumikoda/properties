@@ -59,6 +59,12 @@ Timepicker = (function(_super) {
 
   Timepicker.prototype.setMinute = function(e) {
     this.minute = $(e.currentTarget).data('value');
+    if (this.minute === 0) {
+      this.minute = '00';
+    }
+    if (this.minute === 5) {
+      this.minute = '05';
+    }
     return this.render();
   };
 

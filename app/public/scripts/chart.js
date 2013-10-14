@@ -21,12 +21,12 @@ Chart = (function(_super) {
     }).y(function(d) {
       return d.value;
     }).showValues(false).color(['#666']).forceY([0, this.options.range[1]]).margin({
-      left: 25
-    });
-    this.chart.yAxis.tickFormat(function(d, i) {
+      left: 50
+    }).tooltips(false);
+    this.chart.yAxis.axisLabelDistance(50).axisLabel('Max Dispatch Distance (miles)').tickFormat(function(d, i) {
       return d;
     });
-    this.chart.xAxis.axisLabel('Max Dispatch Distance over time');
+    this.chart.xAxis.axisLabel('Time (hours)');
     this.setTickOptions();
     return $(window).resize(this.setTickOptions);
   };

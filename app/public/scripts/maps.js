@@ -138,7 +138,7 @@ Legend = (function(_super) {
     for (i = _i = 0, _len = _ref2.length; _i < _len; i = ++_i) {
       range = _ref2[i];
       color = this.colorSet[i];
-      _results.push(this.$el.append(("<div class='range'><span class='range-label'>" + range + "</span><i class='icon-sign-blank' style='color:#") + color + "'></icon></div>"));
+      _results.push(this.$el.find('.ranges').append(("<div class='range'><span class='range-label'>" + range + "</span><i class='icon-sign-blank' style='color:#") + color + "'></icon></div>"));
     }
     return _results;
   };

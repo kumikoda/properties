@@ -43,6 +43,10 @@ class Timepicker extends Backbone.View
 
   setMinute : (e) =>
     @minute = $(e.currentTarget).data 'value'
+    if @minute is 0
+      @minute = '00'
+    if @minute is 5
+      @minute = '05'
     @render()
 
   setApm : (e) =>

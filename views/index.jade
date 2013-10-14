@@ -31,7 +31,7 @@ block content
 
     .header
       .title 
-        h1 Max Dispatch Distance (miles)
+        h1 Max Dispatch Distance Visualizer
         
       .time 
         .input-group.time-selectors
@@ -68,9 +68,9 @@ block content
           .btn-group
             button(type="button", class="btn btn-default btn-lg dropdown-toggle selected-minute", data-toggle="dropdown") 00
             ul.dropdown-menu
-              li.minute(data-value='0')
+              li.minute(data-value='00')
                 a 00
-              li.minute(data-value='5')
+              li.minute(data-value='05')
                 a 05
               li.minute(data-value='10')
                 a 10
@@ -103,6 +103,8 @@ block content
 
         
     .legend
+      h4 Miles
+      .ranges
 
     .map-canvas
 

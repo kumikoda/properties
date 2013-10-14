@@ -91,7 +91,7 @@ class Legend extends Backbone.View
   render : () ->
     for range,i in @ranges
       color = @colorSet[i] 
-      @$el.append "<div class='range'><span class='range-label'>#{range}</span><i class='icon-sign-blank' style='color:#"+color+"'></icon></div>"
+      @$el.find('.ranges').append "<div class='range'><span class='range-label'>#{range}</span><i class='icon-sign-blank' style='color:#"+color+"'></icon></div>"
 
   getColor : (x) ->
     @colorSet[ Math.floor( (x-@min) / @stepSize) ]

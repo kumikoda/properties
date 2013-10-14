@@ -34,6 +34,7 @@ class App extends Backbone.Router
       @now = newTime
       @redrawMap newTime
       @redrawChart newTime 
+      @updateValue @currentValue
 
   colorPolygons : ->
     for p in @properties.list
