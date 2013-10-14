@@ -30,6 +30,7 @@ class Map extends Backbone.View
     google.maps.event.addListener @map, 'dragend', => 
       @trigger 'moved'
       @showInfo()
+      console.log @map.getCenter().lb + ',' + @map.getCenter().mb 
       
     # listen to drag event to update marker
     google.maps.event.addListener @map, 'drag', @redrawPointer
@@ -74,7 +75,7 @@ class Legend extends Backbone.View
 
     else 
       if @d < 19
-        @colorSet = colorSets[Math.floor(@d/2)]
+        @colorSet = colorSets[Math.ceil(@d/2)]
         @stepSize = 2
       else
         @colorSet = colorSets[9]

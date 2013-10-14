@@ -42,7 +42,8 @@ Map = (function(_super) {
     google.maps.event.addListener(this.map, 'dragstart', this.hideInfo);
     google.maps.event.addListener(this.map, 'dragend', function() {
       _this.trigger('moved');
-      return _this.showInfo();
+      _this.showInfo();
+      return console.log(_this.map.getCenter().lb + ',' + _this.map.getCenter().mb);
     });
     google.maps.event.addListener(this.map, 'drag', this.redrawPointer);
     return nv.utils.windowResize(this.centerMap);
@@ -108,7 +109,7 @@ Legend = (function(_super) {
       }).call(this);
     } else {
       if (this.d < 19) {
-        this.colorSet = colorSets[Math.floor(this.d / 2)];
+        this.colorSet = colorSets[Math.ceil(this.d / 2)];
         this.stepSize = 2;
       } else {
         this.colorSet = colorSets[9];
