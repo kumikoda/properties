@@ -1,6 +1,6 @@
 class App extends Backbone.Router
-  initialize : ->
-    @properties = new Properties data
+  initialize : (@options)->
+    @properties = new Properties @options.data
 
     @chart = new Chart
       el : ".chart svg"
@@ -71,4 +71,6 @@ class App extends Backbone.Router
     # update the info window
     @map.setInfoContent value
 
-app = new App
+$.get "/data/properties.json", (data)->
+  app = new App
+    data:data

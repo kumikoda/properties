@@ -96,27 +96,34 @@ Legend = (function(_super) {
   Legend.prototype.initialize = function(options) {
     var high, low, x;
     this.options = options;
-    this.d = this.options.range[1] - this.options.range[0] + 1;
+    this.min = this.options.range[0];
+    this.max = this.options.range[1];
+    this.d = this.max - this.min + 1;
     if (colorSets[this.d]) {
       this.colorSet = colorSets[this.d];
       this.stepSize = 1;
       return this.ranges = (function() {
         var _i, _ref2, _ref3, _results;
         _results = [];
-        for (x = _i = _ref2 = this.options.range[0], _ref3 = options.range[1]; _ref2 <= _ref3 ? _i <= _ref3 : _i >= _ref3; x = _ref2 <= _ref3 ? ++_i : --_i) {
+        for (x = _i = _ref2 = this.min, _ref3 = this.max; _ref2 <= _ref3 ? _i <= _ref3 : _i >= _ref3; x = _ref2 <= _ref3 ? ++_i : --_i) {
           _results.push(x);
         }
         return _results;
       }).call(this);
     } else {
-      this.colorSet = colorSets[9];
-      this.stepSize = Math.round(this.d / 9);
+      if (this.d < 19) {
+        this.colorSet = colorSets[Math.floor(this.d / 2)];
+        this.stepSize = 2;
+      } else {
+        this.colorSet = colorSets[9];
+        this.stepSize = Math.ceil(this.d / 9);
+      }
       return this.ranges = (function() {
-        var _i, _results;
+        var _i, _ref2, _results;
         _results = [];
-        for (x = _i = 0; _i <= 9; x = ++_i) {
-          low = this.stepSize * x;
-          high = this.stepSize * (x + 1) - 1;
+        for (x = _i = 0, _ref2 = this.colorSet.length; 0 <= _ref2 ? _i < _ref2 : _i > _ref2; x = 0 <= _ref2 ? ++_i : --_i) {
+          low = this.stepSize * x + this.min;
+          high = this.stepSize * (x + 1) - 1 + this.min;
           _results.push("" + low + " - " + high);
         }
         return _results;
@@ -137,7 +144,7 @@ Legend = (function(_super) {
   };
 
   Legend.prototype.getColor = function(x) {
-    return this.colorSet[Math.floor(x / this.stepSize) - 1];
+    return this.colorSet[Math.floor((x - this.min) / this.stepSize)];
   };
 
   return Legend;

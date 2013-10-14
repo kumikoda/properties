@@ -65,29 +65,36 @@ class Legend extends Backbone.View
   el : '.legend'
 
   initialize : (@options) ->
-    @d = @options.range[1] - @options.range[0] + 1
+    @min = @options.range[0]
+    @max = @options.range[1]
+    @d = @max - @min + 1
+    
     # if there is a scheme that fits 
     if colorSets[@d]
       @colorSet = colorSets[@d]
       @stepSize = 1
-      @ranges = (x for x in [@options.range[0] .. options.range[1]])  
+      @ranges = (x for x in [@min .. @max])  
 
-    # else use the biggest one
-    else
-      @colorSet = colorSets[9]
-      @stepSize = Math.round @d / 9 
-      @ranges = for x in [0..9]
-        low = @stepSize*x
-        high = @stepSize*(x+1) - 1
+    else 
+      if @d < 19
+        @colorSet = colorSets[Math.floor(@d/2)]
+        @stepSize = 2
+      else
+        @colorSet = colorSets[9]
+        @stepSize = Math.ceil @d / 9 
+      
+      @ranges = for x in [0...@colorSet.length]
+        low = @stepSize*x + @min  
+        high = @stepSize*(x+1) - 1 + @min
         "#{low} - #{high}" 
-
+      
   render : () ->
     for range,i in @ranges
       color = @colorSet[i] 
       @$el.append "<div class='range'><span class='range-label'>#{range}</span><i class='icon-sign-blank' style='color:#"+color+"'></icon></div>"
 
-  getColor : (x) -> 
-    @colorSet[ Math.floor(x/@stepSize)-1 ]
+  getColor : (x) ->
+    @colorSet[ Math.floor( (x-@min) / @stepSize) ]
     
 colorSets = 
   9 : ['F7FCFD', 'E0ECF4', 'BFD3E6', '9EBCDA', '8C96C6', '8C6BB1', '88419D', '810F7C', '4D004B']

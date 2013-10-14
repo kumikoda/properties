@@ -2,6 +2,7 @@ class Chart extends Backbone.View
 
   initialize : (@options) ->
     @time = 0
+
     # create chart using nvd3
     @d3 = d3.select @options.el
     @chart = nv.models.discreteBarChart()

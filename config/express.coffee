@@ -30,8 +30,7 @@ module.exports = (app) ->
   # public directory
   app.use express.static __dirname + '/../app/public'
   app.use '/vendor', express.static __dirname + '/../app/vendor'
-  app.use '/lib', express.static __dirname + '/../app/lib'
-
+  app.use '/data', express.static __dirname + '/../app/data'
 
   app.use express.bodyParser()
   app.use express.cookieParser()

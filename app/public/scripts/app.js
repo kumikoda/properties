@@ -1,4 +1,4 @@
-var App, app, _ref,
+var App, _ref,
   __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -12,8 +12,9 @@ App = (function(_super) {
     return _ref;
   }
 
-  App.prototype.initialize = function() {
-    this.properties = new Properties(data);
+  App.prototype.initialize = function(options) {
+    this.options = options;
+    this.properties = new Properties(this.options.data);
     this.chart = new Chart({
       el: ".chart svg",
       range: this.properties.getRange()
@@ -119,4 +120,9 @@ App = (function(_super) {
 
 })(Backbone.Router);
 
-app = new App;
+$.get("/data/properties.json", function(data) {
+  var app;
+  return app = new App({
+    data: data
+  });
+});
