@@ -1,0 +1,33 @@
+.modal.fade
+  .modal-dialog
+    .modal-content
+      .modal-header
+        button.close(type='button', data-dismiss='modal', aria-hidden='true') &times;
+        h3.modal-title Visualizing Properties
+      .modal-body
+        p Imagine a dispatch system built on top of properties that determine its behaviour. A property has a type and value and can also be limited to a certian time and geo-fence. For example :
+        blockquote
+          p Type : Max Dispatch Distance
+          p Value : 5
+          p Time : 11am - 3pm
+          P Geofence : Mission District, SF
+        p This page helps us visualize these properties. The map shows all active properties at the given time, each colored polygon is a property. The graph shows the active values throughout the day for the given location. 
+        
+        hr 
+
+        h4 Interactions 
+        
+        p 
+          i.icon-hand-up
+          |   Pick a time and see the active properties at that moment.
+        p 
+          i.icon-move
+          |   Drag the map around and see the active values at that location. 
+          
+
+      .modal-footer
+        a.pull-left(href='https://github.com/kumikoda/properties', target="_blank")
+          i.icon-github 
+          |  github.com/kumikoda/properties
+        button.btn.btn-default(type='button', data-dismiss='modal') Close
+  

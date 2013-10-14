@@ -1,0 +1,8 @@
+script(type='text/x-handlebars-template', id='info-template')
+  {{#if value}}
+  h4 Max Dispatch Distance = {{value}} miles
+  {{/if}}
+
+  {{#unless value}}
+  h4 Oops! No value at current time and location!
+  {{/unless}}
