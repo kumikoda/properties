@@ -5,23 +5,24 @@
         button.close(type='button', data-dismiss='modal', aria-hidden='true') &times;
         h3.modal-title Visualizing Properties
       .modal-body
-        p Imagine a dispatch system built on top of properties that determine its behaviour. A property has a type and value and can also be limited to a certian time and geo-fence. For example :
+        p Imagine a dispatch system built on top of properties that determine its behaviour. A property has a type and value and can also be limited to a certain time and geo-fence. There is also a weight in case of overlaps. For example :
         blockquote
           p Type : Max Dispatch Distance
           p Value : 5
           p Time : 11am - 3pm
           P Geofence : Mission District, SF
-        p This page helps us visualize these properties. The map shows all active properties at the given time, each colored polygon is a property. The graph shows the active values throughout the day for the given location. 
+          p Weight : 3
+        p This page helps us visualize these properties. The map shows all active properties at the given time, each colored polygon is a property. The graph shows the active values throughout the day for the given location. If there is an overlap of properties, the value of the property with the higher weight is taken.
         
         hr 
 
         h4 Interactions 
         
         p 
-          i.icon-hand-up
+          i.icon-hand-up.interaction-icon
           |   Pick a time and see the active properties at that moment.
         p 
-          i.icon-move
+          i.icon-move.interaction-icon
           |   Drag the map around and see the active values at that location. 
           
 
