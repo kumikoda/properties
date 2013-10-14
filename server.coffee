@@ -6,6 +6,7 @@ require('./config/express')(app)
 
 app.get '/', (req,res) ->
   res.render 'index'
+  env : process.env.NODE_ENV
 
 app.get '/graph', (req,res) ->
   res.render 'graph'
