@@ -16,7 +16,7 @@ class Chart extends Backbone.View
 
     # axis label distance to hack the label to show up
     @chart.yAxis.axisLabelDistance(50).axisLabel('Max Dispatch Distance (miles)').tickFormat (d, i) -> d
-    @chart.xAxis.axisLabel('Time (hours)')
+    @chart.xAxis.axisLabel('Hour of day (24 hour clock)')
     @setTickOptions()
 
     # adjust display options based on window resize

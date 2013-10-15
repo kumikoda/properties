@@ -26,7 +26,7 @@ Chart = (function(_super) {
     this.chart.yAxis.axisLabelDistance(50).axisLabel('Max Dispatch Distance (miles)').tickFormat(function(d, i) {
       return d;
     });
-    this.chart.xAxis.axisLabel('Time (hours)');
+    this.chart.xAxis.axisLabel('Hour of day (24 hour clock)');
     this.setTickOptions();
     return $(window).resize(this.setTickOptions);
   };
